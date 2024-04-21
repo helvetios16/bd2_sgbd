@@ -4,6 +4,6 @@
 
 int main(int argc, char const *argv[]) {
     Adder adison;
-    adison.addScheme("Hola");
+    adison.addScheme("prueba");
     return 0;
 }

@@ -5,8 +5,8 @@
 #include <sstream>
 #include <string>
 
-void Adder::addScheme(std::string archive) {
-    std::fstream scheme("scheme.txt", std::ios::in | std::ios::out);
+void Adder::addScheme(const std::string& archive) {
+    std::fstream scheme("scheme.txt", std::ios::in | std::ios::app | std::ios::out);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -21,7 +21,10 @@ void Adder::addScheme(std::string archive) {
             return;
         }
     }
-    scheme.seekg(0, std::ios::end);
+    scheme.clear();
     scheme << archive << std::endl;
+    if (scheme.fail()) {
+        std::cout << "Error en editar el archivo" << std::endl;
+    }
     scheme.close();
 }
