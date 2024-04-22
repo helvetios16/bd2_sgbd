@@ -1,6 +1,5 @@
 #include "lectore.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -50,8 +49,15 @@ void Lectore::readCsv(const std::string& csv, const std::string& variable) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
     }
-    std::replace(firstLine.begin(), firstLine.end(), ',', '#');
-    scheme << archive << "#" << firstLine << std::endl;
+    std::istringstream ssi(firstLine);
+    std::istringstream ssv(variable);
+    std::string line;
+    std::string wordVarible;
+    while (std::getline(ssi, word, ',')) {
+        std::getline(ssv, wordVarible, ',');
+        line += "#" + word + "#" + wordVarible;
+    }
+    scheme << archive << line << std::endl;
     std::string namearchive = archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::out | std::ios::app);
     if (!archiveTable.is_open()) {
