@@ -1,6 +1,7 @@
 #include "lectore.h"
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -14,7 +15,7 @@ void Lectore::readCsv(const std::string& csv, const std::string& variable) {
     }
     // comprovar que no este en el equema es csv
     std::string searchLine = searchSheme(archive);
-    if (archive == "") {
+    if (searchLine == "") {
         std::cout << "El archivo csv ya se ha leido" << std::endl;
         return;
     }
@@ -89,4 +90,40 @@ std::string Lectore::searchSheme(const std::string& archive) {
     return "";
 }
 
-// void Lectore::see(const std::string& archive, const std::string& columns, const std::string& condition, std::string& toPass);
+void Lectore::see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass) {
+    std::string searchLine = searchSheme(archive);
+    if (searchLine == "") {
+        std::cout << "El archivo csv ya se ha leido" << std::endl;
+        return;
+    }
+    const int columnWidth = 16;
+    int sizeArchive = andi.sizeString(searchLine, '#');
+    std::string namearchive = archive + ".txt";
+    std::fstream archiveTable(namearchive, std::ios::in);
+    if (!archiveTable.is_open()) {
+        std::cout << "Error en abrir el archivo de la tabla" << std::endl;
+        return;
+    }
+    // Agregar comprobacion correcta de conditions al toPass y para la condicional
+    std::string lineTable;
+    std::string lineToColumn;
+    std::string lineToData;
+    if (columns == "*") {
+        while (std::getline(archiveTable, lineTable)) {
+            std::istringstream ss(lineTable);
+            std::string momentWord;
+            std::stringstream formattedString;
+            while (std::getline(ss, momentWord, ',')) {
+                if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
+                    size_t nextCommaPos = lineTable.find(',', ss.tellg());
+                    if (lineTable[nextCommaPos - 1] == '"') {
+                        momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
+                        ss.seekg(nextCommaPos + 1);
+                    }
+                }
+                formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+            }
+            std::cout << formattedString.str() << std::endl;
+        }
+    }
+}

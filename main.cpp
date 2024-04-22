@@ -15,6 +15,7 @@ int main(int argc, char const *argv[]) {
     // Lu proof
     // std::string prueba = lu.searchSheme("prueba");
     // std::cout << prueba << std::endl;
-    lu.readCsv("Titanic.csv", "int,int,int,string,string,float,int,int,string,float,string,char");
+    // lu.readCsv("Titanic.csv", "int,int,int,string,string,float,int,int,string,float,string,char");
+    lu.see("Titanic", "*", "", "");
     return 0;
 }
