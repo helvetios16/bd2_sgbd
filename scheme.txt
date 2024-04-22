@@ -1,0 +1,2 @@
+prueba#nombre#string#edad#int
+index#name#string#age#int#student#bool
