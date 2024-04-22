@@ -5,7 +5,14 @@
 #include <sstream>
 #include <string>
 
-// void readCsv(const std::string& csv, const std::string& variable);
+void Lectore::readCsv(const std::string& csv, const std::string& variable) {
+    size_t pos = csv.rfind('.');
+    std::string archive;
+    if (pos != std::string::npos) {
+        archive = csv.substr(0, pos);
+    }
+    std::cout << archive << std::endl;
+}
 
 std::string Lectore::searchSheme(const std::string& archive) {
     std::fstream scheme("scheme.txt", std::ios::in);
@@ -24,4 +31,4 @@ std::string Lectore::searchSheme(const std::string& archive) {
     return "";
 }
 
-// void see(const std::string& archive, const std::string& columns, const std::string& condition, std::string& toPass);
+// void Lectore::see(const std::string& archive, const std::string& columns, const std::string& condition, std::string& toPass);
