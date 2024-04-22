@@ -93,7 +93,7 @@ std::string Lectore::searchSheme(const std::string& archive) {
 void Lectore::see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass) {
     std::string searchLine = searchSheme(archive);
     if (searchLine == "") {
-        std::cout << "El archivo csv ya se ha leido" << std::endl;
+        std::cout << "El archivo no se encuentra resgistrado" << std::endl;
         return;
     }
     const int columnWidth = 16;
@@ -109,6 +109,18 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
     std::string lineToColumn;
     std::string lineToData;
     if (columns == "*") {
+        std::istringstream ssi(searchLine);
+        std::string fisrt;
+        std::getline(ssi, fisrt, '#');
+        std::stringstream formString;
+        while (std::getline(ssi, fisrt, '#')) {
+            formString << std::setw(columnWidth) << std::left << fisrt.substr(0, columnWidth - 2);
+            std::getline(ssi, fisrt, '#');
+        }
+        std::string stripes(columnWidth * sizeArchive, '-');
+        std::cout << formString.str() << std::endl;
+        std::cout << stripes << std::endl;
+
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable);
             std::string momentWord;
