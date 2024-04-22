@@ -58,14 +58,17 @@ void Lectore::readCsv(const std::string& csv, const std::string& variable) {
         line += "#" + word + "#" + wordVarible;
     }
     scheme << archive << line << std::endl;
+    scheme.close();
+    // pasar los datos del csv a su archivo txt
     std::string namearchive = archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::out | std::ios::app);
     if (!archiveTable.is_open()) {
         std::cout << "Error en abrir el archivo de la tabla" << std::endl;
         return;
     }
-    // pasar los datos del csv a su archivo txt
-    scheme.close();
+    while (std::getline(archiveCsv, line)) {
+        archiveTable << line << std::endl;
+    }
     archiveTable.close();
 }
 
