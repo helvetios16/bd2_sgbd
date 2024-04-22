@@ -57,9 +57,6 @@ void Adder::addRegister(const std::string& archive, const std::string& variable)
         return;
     }
     // en varible verificar que este entre () auqneu se puede dejar a la shell
-    // validar que se encuentre el nombre de la tabla
-    // comrpobar que la cantidad de datos a registrar coninciar en cierto punto la cantdidad de columnas de la tabla}
-    // luego comprobar que si es un int o float o char o bool
     std::string lineScheme;
     std::string lineArchive;
     bool table = false;
@@ -67,9 +64,11 @@ void Adder::addRegister(const std::string& archive, const std::string& variable)
         std::istringstream ss(lineScheme);
         std::string firstWord;
         if (std::getline(ss, firstWord, '#') && firstWord == archive) {
+            // validar que se encuentre el nombre de la tabla
             table = true;
             int sizeTable = sizeString(lineScheme, '#');
             int sizeVariable = sizeString(variable, ',');
+            // comrpobar que la cantidad de datos a registrar coninciar en cierto punto la cantdidad de columnas de la tabla}
             if (!(sizeVariable == sizeTable)) {
                 std::cout << "Ingrese una cantidad de registros acorde a la tabla" << std::endl;
                 scheme.close();
@@ -81,8 +80,7 @@ void Adder::addRegister(const std::string& archive, const std::string& variable)
             while (std::getline(ss, nextWord, '#')) {
                 std::getline(ss, nextWord, '#');
                 std::getline(ssv, secondaryWord, ',');
-                // punto
-                std::cout << nextWord << " " << secondaryWord << std::endl;
+                // luego comprobar que si es un int o float o char o bool
                 if (!checkType(nextWord, secondaryWord)) {
                     std::cout << "Ingrese el dato correcto al tipo de variable" << std::endl;
                     scheme.close();
@@ -130,6 +128,8 @@ bool Adder::checkType(const std::string& type, const std::string& variable) {
         if (variable == "1" || variable == "0") {
             return true;
         }
+    } else if (type == "char") {
+        return variable.size() == 1;
     }
     return false;
 }
