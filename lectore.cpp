@@ -154,14 +154,13 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             std::cout << "El archivo a pasar no se encuentra resgistrado" << std::endl;
             return;
         }
+        // poner condicional para * y especificos
         if (andi.sizeString(schemeToPass, '#') != sizeArchive) {
             std::cout << "Los paremtro entre ambos esquemas no coinciden" << std::endl;
             return;
         }
-        std::string oldArchive;
-        std::string newArchive;
-        std::istringstream sso(searchLine);
-        std::istringstream ssn(schemeToPass);
+        std::string oldArchive, newArchive;
+        std::istringstream sso(searchLine), ssn(schemeToPass);
         std::getline(sso, oldArchive, '#');
         std::getline(ssn, newArchive, '#');
         while (std::getline(sso, oldArchive, '#') && std::getline(ssn, newArchive, '#')) {
@@ -172,6 +171,7 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
                 return;
             }
         }
+        // arriba agregar comprobaciones para cosas de espeficos
         std::string nameToPass = toPass + ".txt";
         archiveToPass.open(nameToPass, std::ios::out | std::ios::app);
         pass = true;
@@ -284,30 +284,82 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             std::string stripes(columnWidth * sizeColumn, '-');
             std::cout << formattedColumn.str() << std::endl;
             std::cout << stripes << std::endl;
-            std::cout << lineNumber << std::endl;
         }
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable), ssn(lineNumber);
-            std::string wordData, number;
+            std::string wordData, number, stringFuture;
             std::stringstream formattedData;
             // no olvidar agregar busqued apara conficioens usar ss
-
-            while (std::getline(ssn, number, ' ')) {
-                int indexNumber = std::stoi(number);
-                std::istringstream sbs(lineTable);
-                for (int i = 0; i < indexNumber; i++) {
-                    std::getline(sbs, wordData, ',');
-                    if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
-                        size_t nextCommaPos = lineTable.find(',', sbs.tellg());
+            if (!searchWord) {
+                for (int i = 0; i < index; i++) {
+                    std::getline(ss, stringFuture, ',');
+                    if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
+                        size_t nextCommaPos = lineTable.find(',', ss.tellg());
                         if (lineTable[nextCommaPos - 1] == '"') {
-                            wordData += lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg());
-                            sbs.seekg(nextCommaPos + 1);
+                            stringFuture += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
+                            ss.seekg(nextCommaPos + 1);
                         }
                     }
                 }
-                formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
             }
-            std::cout << formattedData.str() << std::endl;
+            int counterToComma = 0;
+            std::string lineToPass;
+            while (std::getline(ssn, number, ' ')) {
+                if (searchWord) {
+                    int indexNumber = std::stoi(number);
+                    std::istringstream sbs(lineTable);
+                    for (int i = 0; i < indexNumber; i++) {
+                        std::getline(sbs, wordData, ',');
+                        if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
+                            size_t nextCommaPos = lineTable.find(',', sbs.tellg());
+                            if (lineTable[nextCommaPos - 1] == '"') {
+                                wordData += lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg());
+                                sbs.seekg(nextCommaPos + 1);
+                            }
+                        }
+                    }
+                    if (pass) {
+                        counterToComma++;
+                        lineToPass += wordData;
+                        if (counterToComma != sizeArchive) {
+                            lineToPass += ",";
+                        }
+                    } else {
+                        formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
+                    }
+                } else {
+                    if (stringFuture == "") {
+                        break;
+                    } else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
+                        int indexNumber = std::stoi(number);
+                        std::istringstream sbs(lineTable);
+                        for (int i = 0; i < indexNumber; i++) {
+                            std::getline(sbs, wordData, ',');
+                            if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
+                                size_t nextCommaPos = lineTable.find(',', sbs.tellg());
+                                if (lineTable[nextCommaPos - 1] == '"') {
+                                    wordData += lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg());
+                                    sbs.seekg(nextCommaPos + 1);
+                                }
+                            }
+                        }
+                        if (pass) {
+                            counterToComma++;
+                            lineToPass += wordData;
+                            if (counterToComma != sizeArchive) {
+                                lineToPass += ",";
+                            }
+                        } else {
+                            formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
+                        }
+                    }
+                }
+            }
+            if (lineToPass != "") {
+                archiveToPass << lineToPass << std::endl;
+            } else if (formattedData.str() != "") {
+                std::cout << formattedData.str() << std::endl;
+            }
         }
     }
 }

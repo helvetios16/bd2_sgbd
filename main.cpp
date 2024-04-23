@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
     // std::cout << prueba << std::endl;
     // lu.readCsv("Titanic.csv", "int,int,int,string,string,float,int,int,string,float,string,char");
     // lu.see("Titanic", "*", "Pclass == 1", "");
-    lu.see("Titanic", "PassengerId,Age,Name", "", "");
+    lu.see("Titanic", "PassengerId,Age,Name", "Age > 25", "");
     // lu.checkParementer("2", "<", "100");
     return 0;
 }
