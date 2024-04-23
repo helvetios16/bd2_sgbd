@@ -13,5 +13,5 @@ class Lectore {
     void see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass);
     bool checkParementer(const std::string& operatorSymbol, const std::string& number, const std::string& numberToCheck);
     bool haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo);
-    std::string getWordPosition(const std::string& word, const std::string& line, const char& symbol);
+    std::string getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol);
 };

@@ -255,8 +255,7 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             }
             if (lineToPass != "") {
                 archiveToPass << lineToPass << std::endl;
-            }
-            if (formattedString.str() != "") {
+            } else if (formattedString.str() != "") {
                 std::cout << formattedString.str() << std::endl;
             }
         }
@@ -280,12 +279,35 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
         if (!pass) {
             while (std::getline(sws, wordColumn, ',')) {
                 formattedColumn << std::setw(columnWidth) << std::left << wordColumn.substr(0, columnWidth - 2);
-                lineNumber += getWordPosition(wordColumn, searchLine, '#') + " ";
+                lineNumber += getWordPositionOfLineScheme(wordColumn, searchLine, '#') + " ";
             }
             std::string stripes(columnWidth * sizeColumn, '-');
             std::cout << formattedColumn.str() << std::endl;
             std::cout << stripes << std::endl;
             std::cout << lineNumber << std::endl;
+        }
+        while (std::getline(archiveTable, lineTable)) {
+            std::istringstream ss(lineTable), ssn(lineNumber);
+            std::string wordData, number;
+            std::stringstream formattedData;
+            // no olvidar agregar busqued apara conficioens usar ss
+
+            while (std::getline(ssn, number, ' ')) {
+                int indexNumber = std::stoi(number);
+                std::istringstream sbs(lineTable);
+                for (int i = 0; i < indexNumber; i++) {
+                    std::getline(sbs, wordData, ',');
+                    if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
+                        size_t nextCommaPos = lineTable.find(',', sbs.tellg());
+                        if (lineTable[nextCommaPos - 1] == '"') {
+                            wordData += lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg());
+                            sbs.seekg(nextCommaPos + 1);
+                        }
+                    }
+                }
+                formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
+            }
+            std::cout << formattedData.str() << std::endl;
         }
     }
 }
@@ -330,7 +352,7 @@ bool Lectore::haveTheWordsInScheme(const std::string& lineOne, const std::string
     return true;
 }
 
-std::string Lectore::getWordPosition(const std::string& word, const std::string& line, const char& symbol) {
+std::string Lectore::getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol) {
     std::string words;
     std::istringstream ssi(line);
     std::getline(ssi, words, symbol);  // #
