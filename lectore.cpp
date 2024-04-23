@@ -138,8 +138,6 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             return;
         }
     }
-    // putno
-    std::cout << index << std::endl;
     const int columnWidth = 16;
     int sizeArchive = andi.sizeString(searchLine, '#');
     std::string namearchive = archive + ".txt";
@@ -162,32 +160,53 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
         std::string stripes(columnWidth * sizeArchive, '-');
         std::cout << formString.str() << std::endl;
         std::cout << stripes << std::endl;
-        std::string stringFuture;
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable);
             std::string momentWord;
             std::stringstream formattedString;
-            stringFuture = "";
             std::istringstream ssb(lineTable);
-            while (std::getline(ss, momentWord, ',')) {
-                if (!searchWord) {
+            std::string stringFuture;
+            if (!searchWord) {
+                for (int i = 0; i < index; i++) {
                     std::getline(ssb, stringFuture, ',');
-                    for (int i = 0; i < index; i++) {
-                        std::getline(ssb, stringFuture, ',');
+                    if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
+                        size_t nextCommaPos = lineTable.find(',', ssb.tellg());
+                        if (lineTable[nextCommaPos - 1] == '"') {
+                            stringFuture += lineTable.substr(ssb.tellg(), nextCommaPos - ssb.tellg());
+                            ssb.seekg(nextCommaPos + 1);
+                        }
                     }
                 }
-                if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
-                    size_t nextCommaPos = lineTable.find(',', ss.tellg());
-                    if (lineTable[nextCommaPos - 1] == '"') {
-                        momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
-                        ss.seekg(nextCommaPos + 1);
-                    }
-                }
-                formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
             }
-            std::cout << formattedString.str() << std::endl;
+            while (std::getline(ss, momentWord, ',')) {
+                if (searchWord) {
+                    if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
+                        size_t nextCommaPos = lineTable.find(',', ss.tellg());
+                        if (lineTable[nextCommaPos - 1] == '"') {
+                            momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
+                            ss.seekg(nextCommaPos + 1);
+                        }
+                    }
+                    formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                } else {
+                    if (stringFuture == "") {
+                        break;
+                    } else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
+                        if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
+                            size_t nextCommaPos = lineTable.find(',', ss.tellg());
+                            if (lineTable[nextCommaPos - 1] == '"') {
+                                momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
+                                ss.seekg(nextCommaPos + 1);
+                            }
+                        }
+                        formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                    }
+                }
+            }
+            if (formattedString.str() != "") {
+                std::cout << formattedString.str() << std::endl;
+            }
         }
-        std::cout << stringFuture << std::endl;
     }
 }
 
