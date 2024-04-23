@@ -261,6 +261,32 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             }
         }
         return;
+    } else {
+        int sizeColumn = andi.sizeString(columns, ',');
+        if (sizeColumn > sizeArchive) {
+            std::cout << "Los paremetros de colummas sobrepasan a los de la tabla" << std::endl;
+            return;
+        }
+        if (!haveTheWordsInScheme(columns, searchLine)) {
+            std::cout << "No ingresa columnas que no existen en la tabla" << std::endl;
+            return;
+        }
+        // hacer el resto primero sin where lurgo si luego para copiar a un archivo
+        std::istringstream sws(columns);
+        std::string wordColumn;
+        std::stringstream formattedColumn;
+        std::string lineNumber;
+        // agregar condiciona para sie sta el archivo
+        if (!pass) {
+            while (std::getline(sws, wordColumn, ',')) {
+                formattedColumn << std::setw(columnWidth) << std::left << wordColumn.substr(0, columnWidth - 2);
+                lineNumber += getWordPosition(wordColumn, searchLine, '#') + " ";
+            }
+            std::string stripes(columnWidth * sizeColumn, '-');
+            std::cout << formattedColumn.str() << std::endl;
+            std::cout << stripes << std::endl;
+            std::cout << lineNumber << std::endl;
+        }
     }
 }
 
@@ -281,4 +307,40 @@ bool Lectore::checkParementer(const std::string& number, const std::string& oper
         }
     }
     return false;
+}
+// linea con comas y linea con hashtag
+bool Lectore::haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo) {
+    std::istringstream sso(lineOne);
+    std::string wordOne, wordTwo;
+    while (std::getline(sso, wordOne, ',')) {
+        bool found = false;
+        std::istringstream sst(lineTwo);
+        std::getline(sst, wordTwo, '#');
+        while (std::getline(sst, wordTwo, '#')) {
+            if (wordOne == wordTwo) {
+                found = true;
+                break;
+            }
+            std::getline(sst, wordTwo, '#');
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::string Lectore::getWordPosition(const std::string& word, const std::string& line, const char& symbol) {
+    std::string words;
+    std::istringstream ssi(line);
+    std::getline(ssi, words, symbol);  // #
+    int index = 0;
+    while (std::getline(ssi, words, symbol)) {
+        index++;
+        if (words == word) {
+            break;
+        }
+        std::getline(ssi, words, symbol);
+    }
+    return std::to_string(index);
 }

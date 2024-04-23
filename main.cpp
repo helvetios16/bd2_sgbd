@@ -16,8 +16,8 @@ int main(int argc, char const *argv[]) {
     // std::string prueba = lu.searchSheme("prueba");
     // std::cout << prueba << std::endl;
     // lu.readCsv("Titanic.csv", "int,int,int,string,string,float,int,int,string,float,string,char");
-    // lu.see("student", "*", "edad == 20", "prueba");
-    // lu.see("prueba", "*", "", "");
+    // lu.see("Titanic", "*", "Pclass == 1", "");
+    lu.see("Titanic", "PassengerId", "", "");
     // lu.checkParementer("2", "<", "100");
     return 0;
 }
