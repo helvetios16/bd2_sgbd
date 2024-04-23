@@ -11,4 +11,5 @@ class Lectore {
     void readCsv(const std::string& csv, const std::string& variable);
     std::string searchSheme(const std::string& csv);
     void see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass);
+    bool checkParementer(const std::string& operatorSymbol, const std::string& number, const std::string& numberToCheck);
 };

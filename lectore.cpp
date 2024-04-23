@@ -96,6 +96,50 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
         std::cout << "El archivo no se encuentra resgistrado" << std::endl;
         return;
     }
+    // comprocacion de condicion
+    int sizeContidions = 0;
+    std::string stringConditions;
+    std::string stringTypeConditions;
+    std::string stringOperator;
+    std::string stringNumber;
+    bool searchWord = true;
+    int index = 0;
+    if (condition != "") {
+        sizeContidions = andi.sizeString(condition, ' ');
+        if (sizeContidions != 3) {
+            std::cout << "Error en las condiciones" << std::endl;
+            return;
+        }
+        std::istringstream ssc(condition);
+        std::istringstream sfs(searchLine);
+        std::string wordLine;
+        std::getline(sfs, wordLine, '#');
+        std::getline(ssc, stringConditions, ' ');
+        while (std::getline(sfs, wordLine, '#')) {
+            index++;
+            if (wordLine == stringConditions && std::getline(sfs, stringTypeConditions, '#') || stringTypeConditions == "int" || stringTypeConditions == "float" || stringTypeConditions == "bool") {
+                searchWord = false;
+                break;
+            }
+            std::getline(sfs, wordLine, '#');
+        }
+        if (searchWord) {
+            std::cout << "El dato de la condiciones no se encuentra" << std::endl;
+            return;
+        }
+        std::getline(ssc, stringOperator, ' ');
+        if (!(stringOperator == "<" || stringOperator == ">" || stringOperator == "==")) {
+            std::cout << "El operador registro no se encuentra disponible" << std::endl;
+            return;
+        }
+        std::getline(ssc, stringNumber, ' ');
+        if (!andi.convertToNumber(stringNumber, "float")) {
+            std::cout << "Solo maneja numeros" << std::endl;
+            return;
+        }
+    }
+    // putno
+    std::cout << index << std::endl;
     const int columnWidth = 16;
     int sizeArchive = andi.sizeString(searchLine, '#');
     std::string namearchive = archive + ".txt";
@@ -106,8 +150,6 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
     }
     // Agregar comprobacion correcta de conditions al toPass y para la condicional
     std::string lineTable;
-    std::string lineToColumn;
-    std::string lineToData;
     if (columns == "*") {
         std::istringstream ssi(searchLine);
         std::string fisrt;
@@ -120,12 +162,20 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
         std::string stripes(columnWidth * sizeArchive, '-');
         std::cout << formString.str() << std::endl;
         std::cout << stripes << std::endl;
-
+        std::string stringFuture;
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable);
             std::string momentWord;
             std::stringstream formattedString;
+            stringFuture = "";
+            std::istringstream ssb(lineTable);
             while (std::getline(ss, momentWord, ',')) {
+                if (!searchWord) {
+                    std::getline(ssb, stringFuture, ',');
+                    for (int i = 0; i < index; i++) {
+                        std::getline(ssb, stringFuture, ',');
+                    }
+                }
                 if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
                     size_t nextCommaPos = lineTable.find(',', ss.tellg());
                     if (lineTable[nextCommaPos - 1] == '"') {
@@ -137,5 +187,25 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             }
             std::cout << formattedString.str() << std::endl;
         }
+        std::cout << stringFuture << std::endl;
     }
+}
+
+bool Lectore::checkParementer(const std::string& number, const std::string& operatorSymbol, const std::string& numberToCheck) {
+    float numberOne = std::stof(number);
+    float numberTwo = std::stof(numberToCheck);
+    if (operatorSymbol == "<") {
+        if (numberOne < numberTwo) {
+            return true;
+        }
+    } else if (operatorSymbol == ">") {
+        if (numberOne > numberTwo) {
+            return true;
+        }
+    } else if (operatorSymbol == "==") {
+        if (numberOne == numberTwo) {
+            return true;
+        }
+    }
+    return false;
 }
