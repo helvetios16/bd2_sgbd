@@ -8,7 +8,7 @@ int main(int argc, char const *argv[]) {
     Lectore lu;
     // Adison proof
     // adison.addScheme("prueba", "nombre,string,edad,int");
-    // adison.addRegister("pruesa", "sebas,19");
+    // adison.addRegister("student", "sebas,19");
     // adison.addScheme("index", "name,string,age,int,student,bool");
     // adison.addRegister("index", "sebas,19,1");
 
@@ -16,7 +16,8 @@ int main(int argc, char const *argv[]) {
     // std::string prueba = lu.searchSheme("prueba");
     // std::cout << prueba << std::endl;
     // lu.readCsv("Titanic.csv", "int,int,int,string,string,float,int,int,string,float,string,char");
-    lu.see("Titanic", "*", "Parch == 0", "");
+    // lu.see("student", "*", "edad == 20", "prueba");
+    // lu.see("prueba", "*", "", "");
     // lu.checkParementer("2", "<", "100");
     return 0;
 }

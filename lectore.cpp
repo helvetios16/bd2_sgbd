@@ -146,6 +146,36 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
         std::cout << "Error en abrir el archivo de la tabla" << std::endl;
         return;
     }
+    std::fstream archiveToPass;
+    bool pass = false;
+    if (toPass != "") {
+        std::string schemeToPass = searchSheme(toPass);
+        if (schemeToPass == "") {
+            std::cout << "El archivo a pasar no se encuentra resgistrado" << std::endl;
+            return;
+        }
+        if (andi.sizeString(schemeToPass, '#') != sizeArchive) {
+            std::cout << "Los paremtro entre ambos esquemas no coinciden" << std::endl;
+            return;
+        }
+        std::string oldArchive;
+        std::string newArchive;
+        std::istringstream sso(searchLine);
+        std::istringstream ssn(schemeToPass);
+        std::getline(sso, oldArchive, '#');
+        std::getline(ssn, newArchive, '#');
+        while (std::getline(sso, oldArchive, '#') && std::getline(ssn, newArchive, '#')) {
+            std::getline(sso, oldArchive, '#');
+            std::getline(ssn, newArchive, '#');
+            if (oldArchive != newArchive) {
+                std::cout << "Los tipos de datos entre archivo no coinciden" << std::endl;
+                return;
+            }
+        }
+        std::string nameToPass = toPass + ".txt";
+        archiveToPass.open(nameToPass, std::ios::out | std::ios::app);
+        pass = true;
+    }
     // Agregar comprobacion correcta de conditions al toPass y para la condicional
     std::string lineTable;
     if (columns == "*") {
@@ -153,13 +183,15 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
         std::string fisrt;
         std::getline(ssi, fisrt, '#');
         std::stringstream formString;
-        while (std::getline(ssi, fisrt, '#')) {
-            formString << std::setw(columnWidth) << std::left << fisrt.substr(0, columnWidth - 2);
-            std::getline(ssi, fisrt, '#');
+        if (!pass) {
+            while (std::getline(ssi, fisrt, '#')) {
+                formString << std::setw(columnWidth) << std::left << fisrt.substr(0, columnWidth - 2);
+                std::getline(ssi, fisrt, '#');
+            }
+            std::string stripes(columnWidth * sizeArchive, '-');
+            std::cout << formString.str() << std::endl;
+            std::cout << stripes << std::endl;
         }
-        std::string stripes(columnWidth * sizeArchive, '-');
-        std::cout << formString.str() << std::endl;
-        std::cout << stripes << std::endl;
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable);
             std::string momentWord;
@@ -178,6 +210,8 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
                     }
                 }
             }
+            int counterToComma = 0;
+            std::string lineToPass;
             while (std::getline(ss, momentWord, ',')) {
                 if (searchWord) {
                     if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
@@ -187,7 +221,15 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
                             ss.seekg(nextCommaPos + 1);
                         }
                     }
-                    formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                    if (pass) {
+                        counterToComma++;
+                        lineToPass += momentWord;
+                        if (counterToComma != sizeArchive) {
+                            lineToPass += ",";
+                        }
+                    } else {
+                        formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                    }
                 } else {
                     if (stringFuture == "") {
                         break;
@@ -199,14 +241,26 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
                                 ss.seekg(nextCommaPos + 1);
                             }
                         }
-                        formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                        if (pass) {
+                            counterToComma++;
+                            lineToPass += momentWord;
+                            if (counterToComma != sizeArchive) {
+                                lineToPass += ",";
+                            }
+                        } else {
+                            formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                        }
                     }
                 }
+            }
+            if (lineToPass != "") {
+                archiveToPass << lineToPass << std::endl;
             }
             if (formattedString.str() != "") {
                 std::cout << formattedString.str() << std::endl;
             }
         }
+        return;
     }
 }
 
