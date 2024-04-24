@@ -1,13 +1,13 @@
 #pragma once
 #include <string>
-
-#include "adder.h"
-
-class Lectore {
-   private:
-    Adder andi;
-
+class SGBD {
    public:
+    void addScheme(const std::string& archive, const std::string& variable);
+    void addRegister(const std::string& archive, const std::string& variable);
+    bool validType(const std::string& type);
+    int sizeString(const std::string& line, const char& symbol);
+    bool checkType(const std::string& type, const std::string& variable);
+    bool convertToNumber(const std::string& number, const std::string& type);
     void readCsv(const std::string& csv, const std::string& variable);
     std::string searchSheme(const std::string& csv);
     void see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass);

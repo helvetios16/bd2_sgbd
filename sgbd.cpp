@@ -1,4 +1,4 @@
-#include "lectore.h"
+#include "sgbd.h"
 
 #include <fstream>
 #include <iomanip>
@@ -6,7 +6,151 @@
 #include <sstream>
 #include <string>
 
-void Lectore::readCsv(const std::string& csv, const std::string& variable) {
+void SGBD::addScheme(const std::string& archive, const std::string& variable) {
+    std::fstream scheme("scheme.txt", std::ios::in | std::ios::out | std::ios::app);
+    if (!scheme.is_open()) {
+        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+        return;
+    }
+    // comprobar si el nombre de la tabla ya esta dentro del esquemas
+    std::string lineScheme;
+    while (std::getline(scheme, lineScheme)) {
+        std::istringstream ss(lineScheme);
+        std::string firstWord;
+        if (std::getline(ss, firstWord, '#') && firstWord == archive) {
+            std::cout << "El nombre de la tabla ya esta registrado en el esquema" << std::endl;
+            scheme.close();
+            return;
+        }
+    }
+    // verficar si la relacion para pasar la tabla conicnide con variable,tipo (...)
+    if (variable == "") {
+        std::cout << "Ingrese la relacion(es) \"variable,tipo\" que tendra la tabla" << std::endl;
+        scheme.close();
+        return;
+    }
+    std::istringstream ssv(variable);
+    std::string word;
+    std::string lineNameVariable;
+    int index = 1;
+    while (std::getline(ssv, word, ',')) {
+        if (index % 2 == 0 && !validType(word)) {
+            std::cout << "Ingrese correctamente la relacion(es) \"variable,tipo\"" << std::endl;
+            scheme.close();
+            return;
+        }
+        index++;
+        lineNameVariable += "#" + word;
+    }
+    // pasar la infomacion al esquema
+    scheme.clear();
+    scheme << archive << lineNameVariable << std::endl;
+    if (scheme.fail()) {
+        std::cout << "Error en editar el archivo" << std::endl;
+    }
+    scheme.close();
+}
+
+void SGBD::addRegister(const std::string& archive, const std::string& variable) {
+    std::fstream scheme("scheme.txt", std::ios::in);
+    if (!scheme.is_open()) {
+        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+        return;
+    }
+    // en varible verificar que este entre () auqneu se puede dejar a la shell
+    std::string lineScheme;
+    std::string lineArchive;
+    bool table = false;
+    while (std::getline(scheme, lineScheme)) {
+        std::istringstream ss(lineScheme);
+        std::string firstWord;
+        if (std::getline(ss, firstWord, '#') && firstWord == archive) {
+            // validar que se encuentre el nombre de la tabla
+            table = true;
+            int sizeTable = sizeString(lineScheme, '#');
+            int sizeVariable = sizeString(variable, ',');
+            // comrpobar que la cantidad de datos a registrar coninciar en cierto punto la cantdidad de columnas de la tabla}
+            if (!(sizeVariable == sizeTable)) {
+                std::cout << "Ingrese una cantidad de registros acorde a la tabla" << std::endl;
+                scheme.close();
+                return;
+            }
+            std::string nextWord;
+            std::string secondaryWord;
+            std::istringstream ssv(variable);
+            while (std::getline(ss, nextWord, '#')) {
+                std::getline(ss, nextWord, '#');
+                std::getline(ssv, secondaryWord, ',');
+                // luego comprobar que si es un int o float o char o bool
+                if (!checkType(nextWord, secondaryWord)) {
+                    std::cout << "Ingrese el dato correcto al tipo de variable" << std::endl;
+                    scheme.close();
+                    return;
+                }
+            }
+        }
+        if (table) break;
+    }
+    if (!table) {
+        std::cout << "No se encuentra la tabla en el esquema" << std::endl;
+        return;
+    }
+    scheme.close();
+    std::string nameArchive = archive + ".txt";
+    std::fstream archiveTable(nameArchive, std::ios::out | std::ios::app);
+    archiveTable << variable << std::endl;
+    archiveTable.close();
+    // pasar los datos al documento
+}
+
+bool SGBD::validType(const std::string& type) {
+    return (type == "string" || type == "int" || type == "float" || type == "char" || type == "bool");
+}
+
+int SGBD::sizeString(const std::string& line, const char& symbol) {
+    std::string temp = line;
+    std::istringstream ss(temp);
+    int index = 0;
+    std::string word;
+    while (std::getline(ss, word, symbol)) {
+        index++;
+    }
+    if (symbol == '#') return (index / 2);
+    return index;
+}
+
+bool SGBD::checkType(const std::string& type, const std::string& variable) {
+    if (type == "string") {
+        // si la profesora dice que el string este entre comillas agregar estrutucracion
+        return true;
+    } else if (type == "int" || type == "float") {
+        return convertToNumber(variable, type);
+    } else if (type == "bool") {
+        if (variable == "1" || variable == "0") {
+            return true;
+        }
+    } else if (type == "char") {
+        return variable.size() == 1;
+    }
+    return false;
+}
+
+bool SGBD::convertToNumber(const std::string& number, const std::string& type) {
+    try {
+        size_t pos = 0;
+        if (type == "int") {
+            std::stoi(number, &pos);
+        }
+        if (type == "float") {
+            std::stof(number, &pos);
+        }
+        return pos == number.size();
+    } catch (const std::exception& e) {
+        return false;
+    }
+}
+
+void SGBD::readCsv(const std::string& csv, const std::string& variable) {
     // separar el punto csv
     size_t pos = csv.rfind('.');
     std::string archive;
@@ -27,8 +171,8 @@ void Lectore::readCsv(const std::string& csv, const std::string& variable) {
     }
     std::string firstLine;
     std::getline(archiveCsv, firstLine);
-    int sizeCsv = andi.sizeString(firstLine, ',');
-    int sizeVarible = andi.sizeString(variable, ',');
+    int sizeCsv = sizeString(firstLine, ',');
+    int sizeVarible = sizeString(variable, ',');
     if (sizeCsv != sizeVarible) {
         std::cout << "Ingrese la cantidad correcta de tipo de variables respecto al csv" << std::endl;
         archiveCsv.close();
@@ -73,7 +217,7 @@ void Lectore::readCsv(const std::string& csv, const std::string& variable) {
     archiveTable.close();
 }
 
-std::string Lectore::searchSheme(const std::string& archive) {
+std::string SGBD::searchSheme(const std::string& archive) {
     std::fstream scheme("scheme.txt", std::ios::in);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
@@ -90,7 +234,7 @@ std::string Lectore::searchSheme(const std::string& archive) {
     return "";
 }
 
-void Lectore::see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass) {
+void SGBD::see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass) {
     std::string searchLine = searchSheme(archive);
     if (searchLine == "") {
         std::cout << "El archivo no se encuentra resgistrado" << std::endl;
@@ -105,7 +249,7 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
     bool searchWord = true;
     int index = 0;
     if (condition != "") {
-        sizeContidions = andi.sizeString(condition, ' ');
+        sizeContidions = sizeString(condition, ' ');
         if (sizeContidions != 3) {
             std::cout << "Error en las condiciones" << std::endl;
             return;
@@ -133,13 +277,13 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             return;
         }
         std::getline(ssc, stringNumber, ' ');
-        if (!andi.convertToNumber(stringNumber, "float")) {
+        if (!convertToNumber(stringNumber, "float")) {
             std::cout << "Solo maneja numeros" << std::endl;
             return;
         }
     }
     const int columnWidth = 16;
-    int sizeArchive = andi.sizeString(searchLine, '#');
+    int sizeArchive = sizeString(searchLine, '#');
     std::string namearchive = archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::in);
     if (!archiveTable.is_open()) {
@@ -155,21 +299,31 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             return;
         }
         // poner condicional para * y especificos
-        if (andi.sizeString(schemeToPass, '#') != sizeArchive) {
-            std::cout << "Los paremtro entre ambos esquemas no coinciden" << std::endl;
-            return;
-        }
-        std::string oldArchive, newArchive;
-        std::istringstream sso(searchLine), ssn(schemeToPass);
-        std::getline(sso, oldArchive, '#');
-        std::getline(ssn, newArchive, '#');
-        while (std::getline(sso, oldArchive, '#') && std::getline(ssn, newArchive, '#')) {
-            std::getline(sso, oldArchive, '#');
-            std::getline(ssn, newArchive, '#');
-            if (oldArchive != newArchive) {
-                std::cout << "Los tipos de datos entre archivo no coinciden" << std::endl;
+        if (columns == "*") {
+            if (sizeString(schemeToPass, '#') != sizeArchive) {
+                std::cout << "Los paremtro entre ambos esquemas no coinciden" << std::endl;
                 return;
             }
+            std::string oldArchive, newArchive;
+            std::istringstream sso(searchLine), ssn(schemeToPass);
+            std::getline(sso, oldArchive, '#');
+            std::getline(ssn, newArchive, '#');
+            while (std::getline(sso, oldArchive, '#') && std::getline(ssn, newArchive, '#')) {
+                std::getline(sso, oldArchive, '#');
+                std::getline(ssn, newArchive, '#');
+                if (oldArchive != newArchive) {
+                    std::cout << "Los tipos de datos entre archivo no coinciden" << std::endl;
+                    return;
+                }
+            }
+        } else {
+            if (sizeString(schemeToPass, '#') != sizeString(columns, ',')) {
+                std::cout << "La cantidad de parametros coincide con los de la tabla a pasar" << std::endl;
+                return;
+            }
+            // recorre la column a traves de un getline y buscar que este en el esquema y guardar la siguetne palabra en un string
+            // el el archivo a psar recorrer similar al anterior guardando el tipp de datos y lo guardo en otro string
+            // el resultado sabre si comparo los strings
         }
         // arriba agregar comprobaciones para cosas de espeficos
         std::string nameToPass = toPass + ".txt";
@@ -259,9 +413,10 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
                 std::cout << formattedString.str() << std::endl;
             }
         }
+        archiveToPass.close();
         return;
     } else {
-        int sizeColumn = andi.sizeString(columns, ',');
+        int sizeColumn = sizeString(columns, ',');
         if (sizeColumn > sizeArchive) {
             std::cout << "Los paremetros de colummas sobrepasan a los de la tabla" << std::endl;
             return;
@@ -270,7 +425,7 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
             std::cout << "No ingresa columnas que no existen en la tabla" << std::endl;
             return;
         }
-        // hacer el resto primero sin where lurgo si luego para copiar a un archivo
+        // hacer el resto primero sin where lurgo si luego para copiar a un archivo, falta copiar
         std::istringstream sws(columns);
         std::string wordColumn;
         std::stringstream formattedColumn;
@@ -361,10 +516,12 @@ void Lectore::see(const std::string& archive, const std::string& columns, const 
                 std::cout << formattedData.str() << std::endl;
             }
         }
+        archiveToPass.close();
+        return;
     }
 }
 
-bool Lectore::checkParementer(const std::string& number, const std::string& operatorSymbol, const std::string& numberToCheck) {
+bool SGBD::checkParementer(const std::string& number, const std::string& operatorSymbol, const std::string& numberToCheck) {
     float numberOne = std::stof(number);
     float numberTwo = std::stof(numberToCheck);
     if (operatorSymbol == "<") {
@@ -383,7 +540,7 @@ bool Lectore::checkParementer(const std::string& number, const std::string& oper
     return false;
 }
 // linea con comas y linea con hashtag
-bool Lectore::haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo) {
+bool SGBD::haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo) {
     std::istringstream sso(lineOne);
     std::string wordOne, wordTwo;
     while (std::getline(sso, wordOne, ',')) {
@@ -404,7 +561,7 @@ bool Lectore::haveTheWordsInScheme(const std::string& lineOne, const std::string
     return true;
 }
 
-std::string Lectore::getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol) {
+std::string SGBD::getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol) {
     std::string words;
     std::istringstream ssi(line);
     std::getline(ssi, words, symbol);  // #
