@@ -261,9 +261,11 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         std::getline(ssc, stringConditions, ' ');
         while (std::getline(sfs, wordLine, '#')) {
             index++;
-            if (wordLine == stringConditions && std::getline(sfs, stringTypeConditions, '#') || stringTypeConditions == "int" || stringTypeConditions == "float" || stringTypeConditions == "bool") {
-                searchWord = false;
-                break;
+            if (wordLine == stringConditions && std::getline(sfs, stringTypeConditions, '#')) {
+                if (stringTypeConditions == "int" || stringTypeConditions == "float" || stringTypeConditions == "bool") {
+                    searchWord = false;
+                    break;
+                }
             }
             std::getline(sfs, wordLine, '#');
         }
@@ -322,6 +324,8 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 return;
             }
             // recorre la column a traves de un getline y buscar que este en el esquema y guardar la siguetne palabra en un string
+            std::string oldString, newString;
+            std::istringstream newStream(columns), newStreamArchive(searchLine);
             // el el archivo a psar recorrer similar al anterior guardando el tipp de datos y lo guardo en otro string
             // el resultado sabre si comparo los strings
         }

@@ -4,6 +4,6 @@
 
 int main(int argc, char const *argv[]) {
     SGBD sgbd;
-    sgbd.see("Titanic", "*", "Sex == 20", "");
+    sgbd.see("Titanic", "*", "Sex > 20", "");
     return 0;
 }
