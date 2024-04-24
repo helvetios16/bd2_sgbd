@@ -7,7 +7,7 @@
 #include <string>
 
 void SGBD::addScheme(const std::string& archive, const std::string& variable) {
-    std::fstream scheme("scheme.txt", std::ios::in | std::ios::out | std::ios::app);
+    std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -52,7 +52,7 @@ void SGBD::addScheme(const std::string& archive, const std::string& variable) {
 }
 
 void SGBD::addRegister(const std::string& archive, const std::string& variable) {
-    std::fstream scheme("scheme.txt", std::ios::in);
+    std::fstream scheme("out/scheme.txt", std::ios::in);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -96,7 +96,7 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
         return;
     }
     scheme.close();
-    std::string nameArchive = archive + ".txt";
+    std::string nameArchive = "out/" + archive + ".txt";
     std::fstream archiveTable(nameArchive, std::ios::out | std::ios::app);
     archiveTable << variable << std::endl;
     archiveTable.close();
@@ -189,7 +189,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
             return;
         }
     }
-    std::fstream scheme("scheme.txt", std::ios::out | std::ios::app);
+    std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -205,7 +205,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
     scheme << archive << line << std::endl;
     scheme.close();
     // pasar los datos del csv a su archivo txt
-    std::string namearchive = archive + ".txt";
+    std::string namearchive = "out/" + archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::out | std::ios::app);
     if (!archiveTable.is_open()) {
         std::cout << "Error en abrir el archivo de la tabla" << std::endl;
@@ -218,7 +218,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
 }
 
 std::string SGBD::searchSheme(const std::string& archive) {
-    std::fstream scheme("scheme.txt", std::ios::in);
+    std::fstream scheme("out/scheme.txt", std::ios::in);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return "";
@@ -284,7 +284,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
     }
     const int columnWidth = 16;
     int sizeArchive = sizeString(searchLine, '#');
-    std::string namearchive = archive + ".txt";
+    std::string namearchive = "out/" + archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::in);
     if (!archiveTable.is_open()) {
         std::cout << "Error en abrir el archivo de la tabla" << std::endl;
@@ -326,7 +326,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             // el resultado sabre si comparo los strings
         }
         // arriba agregar comprobaciones para cosas de espeficos
-        std::string nameToPass = toPass + ".txt";
+        std::string nameToPass = "out/" + toPass + ".txt";
         archiveToPass.open(nameToPass, std::ios::out | std::ios::app);
         pass = true;
     }

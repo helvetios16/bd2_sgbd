@@ -5,3 +5,6 @@ compile:
 
 run:
 	main.exe
+
+clean:
+	rm *.exe
