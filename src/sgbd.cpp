@@ -104,7 +104,7 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
 }
 
 bool SGBD::validType(const std::string& type) {
-    return (type == "string" || type == "int" || type == "float" || type == "char" || type == "bool");
+    return (type == "string" || type == "int" || type == "float" || type == "char" || type == "bool" || type == "date");
 }
 
 int SGBD::sizeString(const std::string& line, const char& symbol) {
@@ -181,7 +181,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
     std::istringstream ssf(variable);
     std::string word;
     while (std::getline(ssf, word, ',')) {
-        if (word == "int" || word == "float" || word == "string" || word == "bool" || word == "char") {
+        if (validType(word)) {
             continue;
         } else {
             std::cout << "Ingrese un dato de tipos correcto (string,int,float,char,bool)" << std::endl;
@@ -395,11 +395,24 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::string lineToPass;
             while (std::getline(ss, momentWord, ',')) {
                 if (searchWord) {
+                    // if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
+                    //     size_t nextCommaPos = lineTable.find(',', ss.tellg());
+                    //     if (lineTable[nextCommaPos - 1] == '"') {
+                    //         momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
+                    //         ss.seekg(nextCommaPos + 1);
+                    //     }
+                    // }
+                    std::string newMoment = momentWord;
                     if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
-                        size_t nextCommaPos = lineTable.find(',', ss.tellg());
-                        if (lineTable[nextCommaPos - 1] == '"') {
-                            momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
-                            ss.seekg(nextCommaPos + 1);
+                        while (std::getline(ss, momentWord, ',')) {
+                            newMoment += "," + momentWord;
+                            if (momentWord.size() >= 1 && momentWord.back() == '"') {
+                                char nextChar;
+                                if (ss.get(nextChar) && nextChar != '"') {
+                                    ss.unget();
+                                }
+                                break;
+                            }
                         }
                     }
                     if (pass) {
