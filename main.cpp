@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "sgbd.h"
+#include "include/sgbd.h"
 
 int main(int argc, char const *argv[]) {
     SGBD sgbd;
-    sgbd.see("Titanic", "*", "Age > 45", "");
+    sgbd.see("Titanic", "*", "Sex == 20", "");
     return 0;
 }

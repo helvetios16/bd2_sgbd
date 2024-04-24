@@ -1,4 +1,4 @@
-#include "sgbd.h"
+#include "../include/sgbd.h"
 
 #include <fstream>
 #include <iomanip>
