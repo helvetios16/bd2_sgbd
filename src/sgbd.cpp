@@ -292,8 +292,8 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         std::cout << "Error en abrir el archivo de la tabla" << std::endl;
         return;
     }
-    std::fstream archiveToPass;
     bool pass = false;
+    std::fstream archiveToPass;
     if (toPass != "") {
         std::string schemeToPass = searchSheme(toPass);
         if (schemeToPass == "") {
@@ -301,7 +301,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             return;
         }
         // poner condicional para * y especificos
-        if (columns == "*") {
+        if (columns[0] == '*') {
             if (sizeString(schemeToPass, '#') != sizeArchive) {
                 std::cout << "Los paremtro entre ambos esquemas no coinciden" << std::endl;
                 return;
@@ -324,7 +324,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 return;
             }
             // recorre la column a traves de un getline y buscar que este en el esquema y guardar la siguetne palabra en un string
-            std::string oldString, newString, stringOfArchive, stringToPass;
+            std::string oldString, newString, stringOfArchive;
             std::istringstream newStream(columns), newStreamArchive;
             while (std::getline(newStream, newString, ',')) {
                 newStreamArchive.str(searchLine);
@@ -339,11 +339,12 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 }
             }
             // el el archivo a psar recorrer similar al anterior guardando el tipp de datos y lo guardo en otro string
-            newStreamArchive.str(schemeToPass);
-            std::getline(newStreamArchive, oldString, '#');
-            while (std::getline(newStreamArchive, oldString, '#')) {
-                std::getline(newStreamArchive, oldString, '#');
-                stringToPass += oldString + " ";
+            std::istringstream passToPass(schemeToPass);
+            std::string stringToPass, oldStrinStr;
+            std::getline(passToPass, oldStrinStr, '#');
+            while (std::getline(passToPass, oldStrinStr, '#')) {
+                std::getline(passToPass, oldStrinStr, '#');
+                stringToPass += oldStrinStr + " ";
             }
             // el resultado sabre si comparo los strings
             if (stringToPass != stringOfArchive) {
@@ -358,7 +359,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
     }
     // Agregar comprobacion correcta de conditions al toPass y para la condicional
     std::string lineTable;
-    if (columns == "*" && columns.size() == 1) {
+    if (columns[0] == '*' && columns.size() == 1) {
         std::istringstream ssi(searchLine);
         std::string fisrt;
         std::getline(ssi, fisrt, '#');
@@ -456,11 +457,11 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         std::string wordColumn, lineNumber;
         std::stringstream formattedColumn;
         // agregar condiciona para sie sta el archivo
+        while (std::getline(sws, wordColumn, ',')) {
+            formattedColumn << std::setw(columnWidth) << std::left << wordColumn.substr(0, columnWidth - 2);
+            lineNumber += getWordPositionOfLineScheme(wordColumn, searchLine, '#') + " ";
+        }
         if (!pass) {
-            while (std::getline(sws, wordColumn, ',')) {
-                formattedColumn << std::setw(columnWidth) << std::left << wordColumn.substr(0, columnWidth - 2);
-                lineNumber += getWordPositionOfLineScheme(wordColumn, searchLine, '#') + " ";
-            }
             std::string stripes(columnWidth * sizeColumn, '-');
             std::cout << formattedColumn.str() << std::endl;
             std::cout << stripes << std::endl;
