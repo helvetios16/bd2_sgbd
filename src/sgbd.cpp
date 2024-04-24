@@ -159,7 +159,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
     }
     // comprovar que no este en el equema es csv
     std::string searchLine = searchSheme(archive);
-    if (searchLine == "") {
+    if (searchLine != "") {
         std::cout << "El archivo csv ya se ha leido" << std::endl;
         return;
     }
