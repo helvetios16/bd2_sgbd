@@ -2,3 +2,7 @@ sebas,19
 jorge,18
 jaz,20
 luna,20
+jaz,20
+luna,20
+jaz,20
+luna,20

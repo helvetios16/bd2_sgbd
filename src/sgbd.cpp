@@ -324,9 +324,27 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 return;
             }
             // recorre la column a traves de un getline y buscar que este en el esquema y guardar la siguetne palabra en un string
-            std::string oldString, newString;
-            std::istringstream newStream(columns), newStreamArchive(searchLine);
+            std::string oldString, newString, stringOfArchive, stringToPass;
+            std::istringstream newStream(columns), newStreamArchive;
+            while (std::getline(newStream, newString, ',')) {
+                newStreamArchive.str(searchLine);
+                std::getline(newStreamArchive, oldString, '#');
+                while (std::getline(newStreamArchive, oldString, '#')) {
+                    if (oldString == newString) {
+                        std::getline(newStreamArchive, oldString, '#');
+                        stringOfArchive += oldString + " ";
+                        break;
+                    }
+                    std::getline(newStreamArchive, oldString, '#');
+                }
+            }
             // el el archivo a psar recorrer similar al anterior guardando el tipp de datos y lo guardo en otro string
+            newStreamArchive.str(schemeToPass);
+            std::getline(newStreamArchive, oldString, '#');
+            while (std::getline(newStreamArchive, oldString, '#')) {
+                std::getline(newStreamArchive, oldString, '#');
+                stringToPass += oldString + " ";
+            }
             // el resultado sabre si comparo los strings
         }
         // arriba agregar comprobaciones para cosas de espeficos

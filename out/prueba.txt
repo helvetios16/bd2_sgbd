@@ -1,4 +1,4 @@
-jaz,20
+jaz,16
 luna,20
 jaz,20
-luna,20
+luna,17
