@@ -346,6 +346,10 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 stringToPass += oldString + " ";
             }
             // el resultado sabre si comparo los strings
+            if (stringToPass != stringOfArchive) {
+                std::cout << "Los tipos de datos de los parametros no concuerdan la tabla a pasar" << std::endl;
+                return;
+            }
         }
         // arriba agregar comprobaciones para cosas de espeficos
         std::string nameToPass = "out/" + toPass + ".txt";
@@ -354,7 +358,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
     }
     // Agregar comprobacion correcta de conditions al toPass y para la condicional
     std::string lineTable;
-    if (columns == "*") {
+    if (columns == "*" && columns.size() == 1) {
         std::istringstream ssi(searchLine);
         std::string fisrt;
         std::getline(ssi, fisrt, '#');
@@ -449,9 +453,8 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         }
         // hacer el resto primero sin where lurgo si luego para copiar a un archivo, falta copiar
         std::istringstream sws(columns);
-        std::string wordColumn;
+        std::string wordColumn, lineNumber;
         std::stringstream formattedColumn;
-        std::string lineNumber;
         // agregar condiciona para sie sta el archivo
         if (!pass) {
             while (std::getline(sws, wordColumn, ',')) {
