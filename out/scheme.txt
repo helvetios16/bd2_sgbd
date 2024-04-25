@@ -4,6 +4,4 @@ index#name#string#age#int#student#bool
 Titanic#PassengerId#int#Survived#int#Pclass#int#Name#string#Sex#string#Age#float#SibSp#int#Parch#int#Ticket#string#Fare#float#Cabin#string#Embarked#char
 intento1#numero#int
 netflix#title#string#genre#string#language#string#imdb_score#float#premiere#date#runtime#int#year#int
-csv/programming language trend over time#Week#date#Python#int#Java#int#C++#int
-csv\programming language trend over time#Week#date#Python#int#Java#int#C++#int
 programming language trend over time#Week#date#Python#int#Java#int#C++#int

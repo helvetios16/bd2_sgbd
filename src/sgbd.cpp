@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 void SGBD::addScheme(const std::string& archive, const std::string& variable) {
     std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
@@ -628,4 +629,44 @@ std::string SGBD::getWordPositionOfLineScheme(const std::string& word, const std
         std::getline(ssi, words, symbol);
     }
     return std::to_string(index);
+}
+
+void SGBD::shell() {
+    while (true) {
+        std::string search;
+        std::cout << ">> ";
+        std::getline(std::cin, search);
+        if (search == "exit") {
+            break;
+        } else if (search == "clear") {
+            system("clear");
+        } else if (search == "ls") {
+            system("ls");
+        }
+        std::istringstream ss(search);
+        std::string word, nextWord;
+        std::vector<std::string> chain;
+        while (ss >> word) {
+            if (chain.size() > 0 && word.front() == '(' && word.back() != ')') {
+                nextWord = word;
+                while (ss >> word) {
+                    nextWord += " " + word;
+                    if (nextWord.front() == '(' && nextWord.back() == ')') {
+                        break;
+                    }
+                }
+                word = nextWord;
+            }
+            chain.push_back(word);
+        }
+        if (chain[0] == "read" && chain.size() <= 3) {
+            size_t csvPos = chain[1].find(".csv");
+            if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
+                if (chain[2].front() == '(' && chain[2].back() == ')') {
+                    chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                    readCsv(chain[1], chain[2]);
+                }
+            }
+        }
+    }
 }
