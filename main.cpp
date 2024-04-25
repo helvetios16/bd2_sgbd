@@ -12,7 +12,7 @@ int main(int argc, char const *argv[]) {
     // sgbd.see("intento1", "*", "", "");
     // sgbd.readCsv("netflix.csv", "string,string,string,float,date,int,int");
     // sgbd.see("Titanic", "Name,Age", "", "prueba");
-    sgbd.see("prueba", "*", "", "");
+    sgbd.see("netflix", "*", "", "");
     // sgbd.see("Titanic", "*", "Age == 54", "");
     return 0;
 }

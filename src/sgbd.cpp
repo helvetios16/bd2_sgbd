@@ -396,10 +396,10 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             while (std::getline(ss, momentWord, ',')) {
                 if (searchWord) {
                     if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
-                        size_t nextCommaPos = lineTable.find(',', ss.tellg());
-                        if (lineTable[nextCommaPos - 1] == '"') {
-                            momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
-                            ss.seekg(nextCommaPos + 1);
+                        size_t nextCommaPoss = lineTable.find("\",", ss.tellg());
+                        if (nextCommaPoss != std::string::npos) {
+                            momentWord += lineTable.substr(ss.tellg(), nextCommaPoss - ss.tellg() + 1);
+                            ss.seekg(nextCommaPoss + 2);
                         }
                     }
                     if (pass) {
