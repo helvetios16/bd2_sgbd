@@ -1,4 +1,50 @@
-jaz,16
-luna,20
-jaz,20
-luna,17
+"Braund Mr. Owen Harris",22
+"Cumings Mrs. John Bradley (Florence Briggs Thayer)",38
+"Heikkinen Miss. Laina",26
+"Futrelle Mrs. Jacques Heath (Lily May Peel)",35
+"Allen Mr. William Henry",35
+"Moran Mr. James",
+"McCarthy Mr. Timothy J",54
+"Palsson Master. Gosta Leonard",2
+"Johnson Mrs. Oscar W (Elisabeth Vilhelmina Berg)",27
+"Nasser Mrs. Nicholas (Adele Achem)",14
+"Sandstrom Miss. Marguerite Rut",4
+"Bonnell Miss. Elizabeth",58
+"Saundercock Mr. William Henry",20
+"Andersson Mr. Anders Johan",39
+"Vestrom Miss. Hulda Amanda Adolfina",14
+"Hewlett Mrs. (Mary D Kingcome) ",55
+"Rice Master. Eugene",2
+"Williams Mr. Charles Eugene",
+"Vander Planke Mrs. Julius (Emelia Maria Vandemoortele)",31
+"Masselmani Mrs. Fatima",
+"Fynney Mr. Joseph J",35
+"Beesley Mr. Lawrence",34
+"McGowan Miss. Anna ""Annie""",15
+"Sloper Mr. William Thompson",28
+"Palsson Miss. Torborg Danira",8
+"Asplund Mrs. Carl Oscar (Selma Augusta Emilia Johansson)",38
+"Emir Mr. Farred Chehab",
+"Fortune Mr. Charles Alexander",19
+"O'Dwyer Miss. Ellen ""Nellie""",
+"Todoroff Mr. Lalio",
+"Uruchurtu Don. Manuel E",40
+"Spencer Mrs. William Augustus (Marie Eugenie)",
+"Glynn Miss. Mary Agatha",
+"Wheadon Mr. Edward H",66
+"Meyer Mr. Edgar Joseph",28
+"Holverson Mr. Alexander Oskar",42
+"Mamee Mr. Hanna",
+"Cann Mr. Ernest Charles",21
+"Vander Planke Miss. Augusta Maria",18
+"Nicola-Yarred Miss. Jamila",14
+"Ahlin Mrs. Johan (Johanna Persdotter Larsson)",40
+"Turpin Mrs. William John Robert (Dorothy Ann Wonnacott)",27
+"Kraeff Mr. Theodor",
+"Laroche Miss. Simonne Marie Anne Andree",3
+"Devaney Miss. Margaret Delia",19
+"Rogers Mr. William John",
+"Lennon Mr. Denis",
+"O'Driscoll Miss. Bridget",
+"Samaan Mr. Youssef",
+"Arnold-Franchi Mrs. Josef (Josefine Franchi)",18

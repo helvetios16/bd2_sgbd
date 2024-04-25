@@ -1,4 +1,4 @@
-prueba#nombre#string#edad#int
+prueba#nombre#string#edad#float
 student#nombre#string#edad#int
 index#name#string#age#int#student#bool
 Titanic#PassengerId#int#Survived#int#Pclass#int#Name#string#Sex#string#Age#float#SibSp#int#Parch#int#Ticket#string#Fare#float#Cabin#string#Embarked#char

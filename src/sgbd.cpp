@@ -395,24 +395,11 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::string lineToPass;
             while (std::getline(ss, momentWord, ',')) {
                 if (searchWord) {
-                    // if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
-                    //     size_t nextCommaPos = lineTable.find(',', ss.tellg());
-                    //     if (lineTable[nextCommaPos - 1] == '"') {
-                    //         momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
-                    //         ss.seekg(nextCommaPos + 1);
-                    //     }
-                    // }
-                    std::string newMoment = momentWord;
                     if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
-                        while (std::getline(ss, momentWord, ',')) {
-                            newMoment += "," + momentWord;
-                            if (momentWord.size() >= 1 && momentWord.back() == '"') {
-                                char nextChar;
-                                if (ss.get(nextChar) && nextChar != '"') {
-                                    ss.unget();
-                                }
-                                break;
-                            }
+                        size_t nextCommaPos = lineTable.find(',', ss.tellg());
+                        if (lineTable[nextCommaPos - 1] == '"') {
+                            momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
+                            ss.seekg(nextCommaPos + 1);
                         }
                     }
                     if (pass) {
@@ -515,7 +502,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                     if (pass) {
                         counterToComma++;
                         lineToPass += wordData;
-                        if (counterToComma != sizeArchive) {
+                        if (counterToComma != sizeString(columns, ',')) {
                             lineToPass += ",";
                         }
                     } else {
@@ -540,7 +527,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                         if (pass) {
                             counterToComma++;
                             lineToPass += wordData;
-                            if (counterToComma != sizeArchive) {
+                            if (counterToComma != sizeString(columns, ',')) {
                                 lineToPass += ",";
                             }
                         } else {
