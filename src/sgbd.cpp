@@ -164,7 +164,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
         return;
     }
     // pasar los datos de las columas al esquema
-    std::fstream archiveCsv(csv, std::ios::in);
+    std::fstream archiveCsv("csv/" + csv, std::ios::in);
     if (!archiveCsv.is_open()) {
         std::cout << "Error al abrir el archivo csv" << std::endl;
         return;
