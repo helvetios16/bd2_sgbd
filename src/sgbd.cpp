@@ -693,6 +693,47 @@ void SGBD::shell() {
                 if (chain[1] == "data") {
                     if (chain[2].front() == '"' && chain[2].back() == '"') {
                         chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                        if (chain[3].front() == '(' && chain[3].back() != ')') {
+                            chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                            addRegister(chain[2], chain[3]);
+                        }
+                    }
+                }
+            } else if (chain[0] == "select" && chain.size() >= 4) {
+                if (chain[1].front() == '(' && chain[1].back() == ')') {
+                    chain[1] = chain[1].substr(1, chain[1].size() - 2);
+                }
+                if (chain[2] == "from") {
+                    if (haveSymbol(chain[3], '#')) {
+                        chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                        if (chain.size() == 4) {
+                            see(chain[3], chain[1], "", "");
+                        } else if (chain.size() >= 6) {
+                            if (chain[4] == "where") {
+                                if (chain[5].front() == '(' && chain[5].back() == ')') {
+                                    chain[5] = chain[5].substr(1, chain[5].size() - 2);
+                                    if (chain.size() == 6) {
+                                        see(chain[3], chain[1], chain[5], "");
+                                    } else if (chain.size() == 8) {
+                                        if (chain[6] == "|" || chain[6] == "->") {
+                                            if (haveSymbol(chain[7], '#')) {
+                                                see(chain[3], chain[1], chain[5], chain[7]);
+                                            } else {
+                                                std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (chain[4] == "|" || chain[4] == "->") {
+                                if (haveSymbol(chain[5], '#')) {
+                                    see(chain[3], chain[1], "", chain[5]);
+                                } else {
+                                    std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
+                                }
+                            }
+                        }
+                    } else {
+                        std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
                     }
                 }
             }
