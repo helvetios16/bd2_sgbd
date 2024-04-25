@@ -486,30 +486,39 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::stringstream formattedData;
             // no olvidar agregar busqued apara conficioens usar ss
             if (!searchWord) {
+                bool endOfLine = false;
                 for (int i = 0; i < index; i++) {
                     std::getline(ss, stringFuture, ',');
                     if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
-                        size_t nextCommaPos = lineTable.find(',', ss.tellg());
-                        if (lineTable[nextCommaPos - 1] == '"') {
-                            stringFuture += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
-                            ss.seekg(nextCommaPos + 1);
+                        size_t nextCommaPos = lineTable.find("\",", ss.tellg());
+                        if (nextCommaPos != std::string::npos) {
+                            stringFuture += "," + lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg() + 1);
+                            ss.seekg(nextCommaPos + 2);
+                        } else {
+                            stringFuture += "," + lineTable.substr(ss.tellg());
+                            endOfLine = true;
                         }
                     }
+                    if (endOfLine) break;
                 }
             }
             int counterToComma = 0;
             std::string lineToPass;
             while (std::getline(ssn, number, ' ')) {
+                bool endOfLine = false;
                 if (searchWord) {
                     int indexNumber = std::stoi(number);
                     std::istringstream sbs(lineTable);
                     for (int i = 0; i < indexNumber; i++) {
                         std::getline(sbs, wordData, ',');
                         if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
-                            size_t nextCommaPos = lineTable.find(',', sbs.tellg());
-                            if (lineTable[nextCommaPos - 1] == '"') {
-                                wordData += lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg());
-                                sbs.seekg(nextCommaPos + 1);
+                            size_t nextCommaPos = lineTable.find("\",", sbs.tellg());
+                            if (nextCommaPos != std::string::npos) {
+                                wordData += "," + lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg() + 1);
+                                sbs.seekg(nextCommaPos + 2);
+                            } else {
+                                wordData += "," + lineTable.substr(sbs.tellg());
+                                endOfLine = true;
                             }
                         }
                     }
@@ -522,6 +531,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                     } else {
                         formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
                     }
+                    if (endOfLine) break;
                 } else {
                     if (stringFuture == "") {
                         break;
@@ -531,10 +541,13 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                         for (int i = 0; i < indexNumber; i++) {
                             std::getline(sbs, wordData, ',');
                             if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
-                                size_t nextCommaPos = lineTable.find(',', sbs.tellg());
-                                if (lineTable[nextCommaPos - 1] == '"') {
-                                    wordData += lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg());
-                                    sbs.seekg(nextCommaPos + 1);
+                                size_t nextCommaPos = lineTable.find("\",", sbs.tellg());
+                                if (nextCommaPos != std::string::npos) {
+                                    wordData += "," + lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg() + 1);
+                                    sbs.seekg(nextCommaPos + 2);
+                                } else {
+                                    wordData += "," + lineTable.substr(sbs.tellg());
+                                    endOfLine = true;
                                 }
                             }
                         }
@@ -547,6 +560,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                         } else {
                             formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
                         }
+                        if (endOfLine) break;
                     }
                 }
             }
