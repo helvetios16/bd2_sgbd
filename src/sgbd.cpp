@@ -380,26 +380,35 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::istringstream ssb(lineTable);
             std::string stringFuture;
             if (!searchWord) {
+                bool endOfLine = false;
                 for (int i = 0; i < index; i++) {
                     std::getline(ssb, stringFuture, ',');
                     if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
-                        size_t nextCommaPos = lineTable.find(',', ssb.tellg());
-                        if (lineTable[nextCommaPos - 1] == '"') {
-                            stringFuture += lineTable.substr(ssb.tellg(), nextCommaPos - ssb.tellg());
-                            ssb.seekg(nextCommaPos + 1);
+                        size_t nextCommaPos = lineTable.find("\",", ssb.tellg());
+                        if (nextCommaPos != std::string::npos) {
+                            stringFuture += "," + lineTable.substr(ssb.tellg(), nextCommaPos - ssb.tellg() + 1);
+                            ssb.seekg(nextCommaPos + 2);
+                        } else {
+                            stringFuture += "," + lineTable.substr(ssb.tellg());
+                            endOfLine = true;
                         }
                     }
+                    if (endOfLine) break;
                 }
             }
             int counterToComma = 0;
             std::string lineToPass;
             while (std::getline(ss, momentWord, ',')) {
+                bool endOfLine = false;
                 if (searchWord) {
                     if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
                         size_t nextCommaPoss = lineTable.find("\",", ss.tellg());
                         if (nextCommaPoss != std::string::npos) {
-                            momentWord += lineTable.substr(ss.tellg(), nextCommaPoss - ss.tellg() + 1);
+                            momentWord += "," + lineTable.substr(ss.tellg(), nextCommaPoss - ss.tellg() + 1);
                             ss.seekg(nextCommaPoss + 2);
+                        } else {
+                            momentWord += "," + lineTable.substr(ss.tellg());
+                            endOfLine = true;
                         }
                     }
                     if (pass) {
@@ -411,15 +420,19 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                     } else {
                         formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
                     }
+                    if (endOfLine) break;
                 } else {
                     if (stringFuture == "") {
                         break;
                     } else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
                         if (momentWord.size() >= 1 && momentWord.front() == '"' && momentWord.back() != '"') {
-                            size_t nextCommaPos = lineTable.find(',', ss.tellg());
-                            if (lineTable[nextCommaPos - 1] == '"') {
-                                momentWord += lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg());
-                                ss.seekg(nextCommaPos + 1);
+                            size_t nextCommaPoss = lineTable.find("\",", ss.tellg());
+                            if (nextCommaPoss != std::string::npos) {
+                                momentWord += "," + lineTable.substr(ss.tellg(), nextCommaPoss - ss.tellg() + 1);
+                                ss.seekg(nextCommaPoss + 2);
+                            } else {
+                                momentWord += "," + lineTable.substr(ss.tellg());
+                                endOfLine = true;
                             }
                         }
                         if (pass) {
@@ -431,6 +444,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                         } else {
                             formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
                         }
+                        if (endOfLine) break;
                     }
                 }
             }
