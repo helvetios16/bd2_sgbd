@@ -640,32 +640,66 @@ void SGBD::shell() {
             break;
         } else if (search == "clear") {
             system("clear");
-        } else if (search == "ls") {
-            system("ls");
-        }
-        std::istringstream ss(search);
-        std::string word, nextWord;
-        std::vector<std::string> chain;
-        while (ss >> word) {
-            // agregar comprovacion para comillas para csv si quiero y para el from de archivos
-            if (chain.size() > 0 && word.front() == '(' && word.back() != ')') {
-                nextWord = word;
-                while (ss >> word) {
-                    nextWord += " " + word;
-                    if (nextWord.front() == '(' && nextWord.back() == ')') break;
+        } else if (search != "") {
+            std::istringstream ss(search);
+            std::string word, nextWord;
+            std::vector<std::string> chain;
+            while (ss >> word) {
+                if (chain.size() > 0 && word.front() == '(' && word.back() != ')') {
+                    nextWord = word;
+                    while (ss >> word) {
+                        nextWord += " " + word;
+                        if (nextWord.front() == '(' && nextWord.back() == ')') break;
+                    }
+                    word = nextWord;
                 }
-                word = nextWord;
+                if (chain.size() > 0 && word.front() == '"' && word.back() != '"') {
+                    nextWord = word;
+                    while (ss >> word) {
+                        nextWord += " " + word;
+                        if (nextWord.front() == '"' && nextWord.back() == '"') break;
+                    }
+                    word = nextWord;
+                }
+                chain.push_back(word);
             }
-            chain.push_back(word);
-        }
-        if (chain[0] == "read" && chain.size() <= 3) {
-            size_t csvPos = chain[1].find(".csv");
-            if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
-                if (chain[2].front() == '(' && chain[2].back() == ')') {
-                    chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                    readCsv(chain[1], chain[2]);
+            if (chain[0] == "read" && chain.size() == 3) {
+                if (chain[1].front() == '"' && chain[1].back() == '"') {
+                    chain[1] = chain[1].substr(1, chain[1].size() - 2);
+                    std::cout << chain[1] << std::endl;
+                    size_t csvPos = chain[1].find(".csv");
+                    if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
+                        if (chain[2].front() == '(' && chain[2].back() == ')') {
+                            chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                            readCsv(chain[1], chain[2]);
+                        }
+                    }
+                }
+            } else if (chain[0] == "create" && chain.size() == 4) {
+                if (chain[1] == "scheme") {
+                    if (haveSymbol(chain[2], '#')) {
+                        if (chain[2].front() == '"' && chain[2].back() == '"') {
+                            chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                            if (chain[3].front() == '(' && chain[3].back() == ')') {
+                                chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                                addScheme(chain[2], chain[3]);
+                            }
+                        }
+                    }
+                } else {
+                    std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
+                }
+            } else if (chain[0] == "add" && chain.size() == 4) {
+                if (chain[1] == "data") {
+                    if (chain[2].front() == '"' && chain[2].back() == '"') {
+                        chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                    }
                 }
             }
         }
     }
+}
+
+bool SGBD::haveSymbol(const std::string& word, const char& character) {
+    return word.find(character) == std::string::npos;
 }
