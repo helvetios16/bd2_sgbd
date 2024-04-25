@@ -647,13 +647,12 @@ void SGBD::shell() {
         std::string word, nextWord;
         std::vector<std::string> chain;
         while (ss >> word) {
+            // agregar comprovacion para comillas para csv si quiero y para el from de archivos
             if (chain.size() > 0 && word.front() == '(' && word.back() != ')') {
                 nextWord = word;
                 while (ss >> word) {
                     nextWord += " " + word;
-                    if (nextWord.front() == '(' && nextWord.back() == ')') {
-                        break;
-                    }
+                    if (nextWord.front() == '(' && nextWord.back() == ')') break;
                 }
                 word = nextWord;
             }
