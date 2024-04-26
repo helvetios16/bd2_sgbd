@@ -666,7 +666,6 @@ void SGBD::shell() {
             if (chain[0] == "read" && chain.size() == 3) {
                 if (chain[1].front() == '"' && chain[1].back() == '"') {
                     chain[1] = chain[1].substr(1, chain[1].size() - 2);
-                    std::cout << chain[1] << std::endl;
                     size_t csvPos = chain[1].find(".csv");
                     if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
                         if (chain[2].front() == '(' && chain[2].back() == ')') {
