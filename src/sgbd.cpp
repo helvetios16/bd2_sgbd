@@ -8,12 +8,18 @@
 #include <vector>
 
 SGBD::SGBD() {
-    std::fstream scheme("out/scheme.txt", std::ios::out);
-    if (!scheme.is_open()) {
-        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
-        return;
+    std::fstream file("out/scheme.txt", std::ios::in);
+    if (!file) {
+        std::fstream scheme("out/scheme.txt", std::ios::out);
+        if (!scheme) {
+            std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+        } else {
+            scheme.close();
+            return;
+        }
+    } else {
+        file.close();
     }
-    scheme.close();
 }
 
 void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
