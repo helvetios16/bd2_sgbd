@@ -19,4 +19,5 @@ class SGBD {
     std::string getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol);
     void shell();
     bool haveSymbol(const std::string& word, const char& character);
+    void createTable(const std::string& archive);
 };
