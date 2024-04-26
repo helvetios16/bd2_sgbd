@@ -1,10 +1,16 @@
-all: compile run
+all: clean
 
-compile:
-	g++ -g main.cpp src/sgbd.cpp -o main.exe
+main.exe: sgbd.o main.o
+	g++ sgbd.o main.o -o main.exe
 
-run:
-	main.exe
+main.o: main.cpp include/sgbd.h
+	g++ -c main.cpp
 
-clean:
-	rm *.exe
+sgbd.o: src/sgbd.cpp include/sgbd.h
+	g++ -c src/sgbd.cpp
+
+run: main.exe
+	./main.exe
+
+clean: run
+	rm *.o
