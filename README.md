@@ -6,7 +6,8 @@
 -   [x] Select from all columns
 -   [x] Select specific columns
 -   [x] Selection but adding condition to all columns
--   [x] Selection but adding condition to specific columns
+-   [x] Selection but adding condition to specific columns (int,float,bool)
+-   [] Conditions add type value to compare strings
 -   [-] Configure the shell more (megatron)
 
 # ADDITIONAL TASK

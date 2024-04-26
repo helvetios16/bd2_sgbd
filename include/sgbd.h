@@ -5,6 +5,10 @@ class SGBD {
     std::string searchLine;
 
    public:
+    SGBD();
+    void createTable(const std::string& archive);
+    void addColumn(const std::string& information);
+    void completeColumns(const std::string& information);
     void addSchemeAllDirect(const std::string& archive, const std::string& variable);
     void addRegister(const std::string& archive, const std::string& variable);
     bool validType(const std::string& type);
@@ -19,5 +23,4 @@ class SGBD {
     std::string getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol);
     void shell();
     bool haveSymbol(const std::string& word, const char& character);
-    void createTable(const std::string& archive);
 };
