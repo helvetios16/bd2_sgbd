@@ -1,0 +1,3 @@
+Titanic#PassengerId#int#Survived#int#Pclass#int#Name#string#Sex#string#Age#int#SibSp#int#Parch#int#Ticket#string#Fare#float#Cabin#string#Embarked#char
+unsa#nombre#string
+Movie_Ratings##string#"Patrick C"#int#"Heather"#int#"Bryan"#int#"PatrickT"#int#"Thomas"#int#"aaron"#int#"vanessa"#int#"greg"#int#"brian"#int#"ben"#int#"Katherine"#int#"Jonathan"#int#"Zwe"#int#"Erin"#int#"Chris"#int#"Zak"#int#"Matt"#int#"Chris"#int#"Josh"#int#"Amy"#int#"Valerie"#int#"Gary"#int#"Stephen"#int#"Jessica"#int#"Jeff"#int

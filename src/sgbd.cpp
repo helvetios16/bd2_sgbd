@@ -285,7 +285,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             return;
         }
     }
-    const int columnWidth = 16;
+    const int columnWidth = 8;
     int sizeArchive = sizeString(searchLine, '#');
     std::string namearchive = "out/" + archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::in);
@@ -668,12 +668,12 @@ void SGBD::shell() {
             if (chain[0] == "read" && chain.size() == 3) {
                 if (chain[1].front() == '"' && chain[1].back() == '"') {
                     chain[1] = chain[1].substr(1, chain[1].size() - 2);
-                    size_t csvPos = chain[1].find(".csv");
-                    if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
-                        if (chain[2].front() == '(' && chain[2].back() == ')') {
-                            chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                            readCsv(chain[1], chain[2]);
-                        }
+                }
+                size_t csvPos = chain[1].find(".csv");
+                if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
+                    if (chain[2].front() == '(' && chain[2].back() == ')') {
+                        chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                        readCsv(chain[1], chain[2]);
                     }
                 }
             } else if (chain[0] == "create" && chain.size() == 4) {
