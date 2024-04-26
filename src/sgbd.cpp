@@ -638,6 +638,8 @@ void SGBD::shell() {
         std::getline(std::cin, search);
         if (search == "exit") {
             break;
+        } else if (search == "ls") {
+            system("ls");
         } else if (search == "clear") {
             system("clear");
         } else if (search != "") {
@@ -677,12 +679,10 @@ void SGBD::shell() {
             } else if (chain[0] == "create" && chain.size() == 4) {
                 if (chain[1] == "scheme") {
                     if (haveSymbol(chain[2], '#')) {
-                        if (chain[2].front() == '"' && chain[2].back() == '"') {
-                            chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                            if (chain[3].front() == '(' && chain[3].back() == ')') {
-                                chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                                addScheme(chain[2], chain[3]);
-                            }
+                        if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                        if (chain[3].front() == '(' && chain[3].back() == ')') {
+                            chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                            addScheme(chain[2], chain[3]);
                         }
                     }
                 } else {
@@ -690,12 +690,10 @@ void SGBD::shell() {
                 }
             } else if (chain[0] == "add" && chain.size() == 4) {
                 if (chain[1] == "data") {
-                    if (chain[2].front() == '"' && chain[2].back() == '"') {
-                        chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                        if (chain[3].front() == '(' && chain[3].back() != ')') {
-                            chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                            addRegister(chain[2], chain[3]);
-                        }
+                    if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                    if (chain[3].front() == '(' && chain[3].back() == ')') {
+                        chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                        addRegister(chain[2], chain[3]);
                     }
                 }
             } else if (chain[0] == "select" && chain.size() >= 4) {
@@ -704,7 +702,7 @@ void SGBD::shell() {
                 }
                 if (chain[2] == "from") {
                     if (haveSymbol(chain[3], '#')) {
-                        chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                        if (chain[3].front() == '"' && chain[3].back() == '"') chain[3] = chain[3].substr(1, chain[3].size() - 2);
                         if (chain.size() == 4) {
                             see(chain[3], chain[1], "", "");
                         } else if (chain.size() >= 6) {
@@ -724,7 +722,9 @@ void SGBD::shell() {
                                     }
                                 }
                             } else if (chain[4] == "|" || chain[4] == "->") {
+                                std::cout << "yes" << std::endl;
                                 if (haveSymbol(chain[5], '#')) {
+                                    if (chain[5].front() == '"' && chain[5].back() == '"') chain[5] = chain[5].substr(1, chain[5].size() - 2);
                                     see(chain[3], chain[1], "", chain[5]);
                                 } else {
                                     std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;

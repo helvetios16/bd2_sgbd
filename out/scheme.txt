@@ -5,3 +5,4 @@ Titanic#PassengerId#int#Survived#int#Pclass#int#Name#string#Sex#string#Age#float
 intento1#numero#int
 programming language trend over time#Week#date#Python#int#Java#int#C++#int
 netflix#title#string#genre#string#language#string#imdb_score#float#premiere#date#runtime#int#year#int
+Estudiante#nombre#string#grado#int
