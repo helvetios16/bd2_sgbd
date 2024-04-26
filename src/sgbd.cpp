@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-void SGBD::addScheme(const std::string& archive, const std::string& variable) {
+void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
     std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
@@ -151,7 +151,7 @@ bool SGBD::convertToNumber(const std::string& number, const std::string& type) {
     }
 }
 
-void SGBD::readCsv(const std::string& csv, const std::string& variable) {
+void SGBD::readCsvAllDirect(const std::string& csv, const std::string& variable) {
     // separar el punto csv
     size_t pos = csv.rfind('.');
     std::string archive;
@@ -159,7 +159,7 @@ void SGBD::readCsv(const std::string& csv, const std::string& variable) {
         archive = csv.substr(0, pos);
     }
     // comprovar que no este en el equema es csv
-    std::string searchLine = searchSheme(archive);
+    this->searchLine = searchSheme(archive);
     if (searchLine != "") {
         std::cout << "El archivo csv ya se ha leido" << std::endl;
         return;
@@ -236,7 +236,7 @@ std::string SGBD::searchSheme(const std::string& archive) {
 }
 
 void SGBD::see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass) {
-    std::string searchLine = searchSheme(archive);
+    this->searchLine = searchSheme(archive);
     if (searchLine == "") {
         std::cout << "El archivo no se encuentra resgistrado" << std::endl;
         return;
@@ -673,7 +673,7 @@ void SGBD::shell() {
                 if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
                     if (chain[2].front() == '(' && chain[2].back() == ')') {
                         chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                        readCsv(chain[1], chain[2]);
+                        readCsvAllDirect(chain[1], chain[2]);
                     }
                 }
             } else if (chain[0] == "create" && chain.size() == 4) {
@@ -682,7 +682,7 @@ void SGBD::shell() {
                         if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
                         if (chain[3].front() == '(' && chain[3].back() == ')') {
                             chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                            addScheme(chain[2], chain[3]);
+                            addSchemeAllDirect(chain[2], chain[3]);
                         }
                     }
                 } else {
