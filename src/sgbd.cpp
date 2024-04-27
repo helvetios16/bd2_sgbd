@@ -1,5 +1,6 @@
 #include "../include/sgbd.h"
 
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -37,7 +38,7 @@ void SGBD::createTable(const std::string& archive) {
     }
 }
 
-void SGBD::addColumn(const std::string& information) {
+void SGBD::addColumn(const std::string& information, const std::string& archive) {
     std::istringstream ss(information);
     std::string line, word, passLine;
     while (std::getline(ss, line, ',')) {
@@ -54,7 +55,26 @@ void SGBD::addColumn(const std::string& information) {
             passLine += "#" + word;
         }
     }
-    std::cout << passLine << std::endl;
+    std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out);
+    std::fstream temp("out/temp.txt", std::ios::out);
+    if (!scheme.is_open() || !temp.is_open()) {
+        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+        return;
+    }
+    while (std::getline(scheme, line)) {
+        std::istringstream ss(line);
+        if (std::getline(ss, word, '#')) {
+            if (word == archive) {
+                temp << line + passLine << std::endl;
+            } else {
+                temp << line << std::endl;
+            }
+        }
+    }
+    scheme.close();
+    temp.close();
+    std::remove("out/scheme.txt");
+    std::rename("out/temp.txt", "out/scheme.txt");
 }
 
 void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
