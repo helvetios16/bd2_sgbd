@@ -4,6 +4,9 @@
 
 int main(int argc, char const *argv[]) {
     SGBD sgbd;
-    sgbd.shell();
+    // sgbd.shell();
+    sgbd.createTable("mundo");
+    sgbd.addColumn("nombre string,edad int");
+
     return 0;
 }

@@ -9,7 +9,6 @@ class SGBD {
     SGBD();
     void createTable(const std::string& archive);
     void addColumn(const std::string& information);
-    void completeColumns(const std::string& information);
     void addSchemeAllDirect(const std::string& archive, const std::string& variable);
     void addRegister(const std::string& archive, const std::string& variable);
     bool validType(const std::string& type);

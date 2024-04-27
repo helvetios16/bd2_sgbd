@@ -22,6 +22,41 @@ SGBD::SGBD() {
     }
 }
 
+void SGBD::createTable(const std::string& archive) {
+    std::string file = searchSheme(archive);
+    if (file == "") {
+        std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+        if (!scheme.is_open()) {
+            std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+            return;
+        }
+        scheme << archive << std::endl;
+        scheme.close();
+    } else {
+        std::cout << "La tabla ya esta registrado" << std::endl;
+    }
+}
+
+void SGBD::addColumn(const std::string& information) {
+    std::istringstream ss(information);
+    std::string line, word, passLine;
+    while (std::getline(ss, line, ',')) {
+        int index = 0;
+        std::istringstream ssi(line);
+        while (ssi >> word) {
+            index++;
+            if (index % 2 == 0) {
+                if (!(word == "string" || word == "int" || word == "float" || word == "date" || word == "bool")) {
+                    std::cout << "Tiene que ingresar un tipo de valor a la columna" << std::endl;
+                    return;
+                }
+            }
+            passLine += "#" + word;
+        }
+    }
+    std::cout << passLine << std::endl;
+}
+
 void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
     std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
