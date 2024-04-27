@@ -1,5 +1,6 @@
 # TASK
 
+-   [x] Create constructor to start the scheme.txt
 -   [!] Create table with anithny
 -   [!] Add column with name and value each for each
 -   [!] Add all columns with their respective names and values.

@@ -278,14 +278,22 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         while (std::getline(sfs, wordLine, '#')) {
             index++;
             if (wordLine == stringConditions && std::getline(sfs, stringTypeConditions, '#')) {
+                // mejorar
                 if (stringTypeConditions == "int" || stringTypeConditions == "float" || stringTypeConditions == "bool") {
+                    searchWord = false;
+                    this->isString = false;
+                    break;
+                }
+                if (stringTypeConditions == "string" || stringTypeConditions == "char") {
+                    this->isString = true;
                     searchWord = false;
                     break;
                 }
             }
             std::getline(sfs, wordLine, '#');
         }
-        if (searchWord) {
+        if (searchWord && this->isString == false) {
+            std::cout << stringTypeConditions << std::endl;
             std::cout << "El dato de la condiciones no se encuentra" << std::endl;
             return;
         }
@@ -295,7 +303,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             return;
         }
         std::getline(ssc, stringNumber, ' ');
-        if (!convertToNumber(stringNumber, "float")) {
+        if (!convertToNumber(stringNumber, "float") && this->isString == false) {
             std::cout << "Solo maneja numeros" << std::endl;
             return;
         }
@@ -592,19 +600,25 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
 }
 
 bool SGBD::checkParementer(const std::string& number, const std::string& operatorSymbol, const std::string& numberToCheck) {
-    float numberOne = std::stof(number);
-    float numberTwo = std::stof(numberToCheck);
-    if (operatorSymbol == "<") {
-        if (numberOne < numberTwo) {
-            return true;
+    if (!this->isString) {
+        float numberOne = std::stof(number);
+        float numberTwo = std::stof(numberToCheck);
+        if (operatorSymbol == "<") {
+            if (numberOne < numberTwo) {
+                return true;
+            }
+        } else if (operatorSymbol == ">") {
+            if (numberOne > numberTwo) {
+                return true;
+            }
+        } else if (operatorSymbol == "==") {
+            if (numberOne == numberTwo) {
+                return true;
+            }
         }
-    } else if (operatorSymbol == ">") {
-        if (numberOne > numberTwo) {
-            return true;
-        }
-    } else if (operatorSymbol == "==") {
-        if (numberOne == numberTwo) {
-            return true;
+    } else {
+        if (operatorSymbol == "==") {
+            return number == numberToCheck;
         }
     }
     return false;
