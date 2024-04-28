@@ -99,6 +99,38 @@ void SGBD::showtable(const std::string& archive) {
     std::cout << formString.str();
 }
 
+void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
+    std::string file = searchSheme(archive);
+    if (file == "") {
+        std::cout << "La tabla no se encuentra registrada" << std::endl;
+        return;
+    }
+    std::fstream archiveTable("out/" + archive + ".txt", std::ios::out | std::ios::app);
+    if (!archiveTable.is_open()) {
+        std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+        return;
+    }
+    std::fstream archiveCsv("csv/" + csv, std::ios::in);
+    if (!archiveCsv.is_open()) {
+        std::cout << "Error al abrir el archivo csv" << std::endl;
+        return;
+    }
+    std::string line;
+    std::getline(archiveCsv, line);
+    int sizeFile = sizeString(file, '#');
+    if (sizeFile != sizeString(line, ',')) {
+        std::cout << "La cantidad de columnas no coincide con la tabla" << std::endl;
+        archiveCsv.close();
+        archiveTable.close();
+        return;
+    }
+    while (std::getline(archiveCsv, line)) {
+        archiveTable << line << std::endl;
+    }
+    archiveTable.close();
+    archiveCsv.close();
+}
+
 void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
     std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
