@@ -5,8 +5,7 @@
 int main(int argc, char const *argv[]) {
     SGBD sgbd;
     // sgbd.shell();
-    sgbd.createTable("mundo");
-    sgbd.addColumn("vida int", "mundo");
+    sgbd.showtable("mundo");
 
     return 0;
 }

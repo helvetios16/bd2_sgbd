@@ -77,6 +77,28 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
     std::rename("out/temp.txt", "out/scheme.txt");
 }
 
+void SGBD::showtable(const std::string& archive) {
+    std::string file = searchSheme(archive);
+    if (file == "") {
+        std::cout << "La tabla no se encuentra registrada" << std::endl;
+        return;
+    }
+    std::string word;
+    std::istringstream ss(file);
+    std::stringstream formString;
+    const int columnWidth = 16;
+    std::getline(ss, word, '#');
+    std::cout << word << std::endl;
+    std::string stripes(columnWidth * 2, '-');
+    std::cout << stripes << std::endl;
+    while (std::getline(ss, word, '#')) {
+        formString << std::setw(columnWidth) << std::left << word.substr(0, columnWidth - 2);
+        std::getline(ss, word, '#');
+        formString << std::setw(columnWidth) << std::left << word.substr(0, columnWidth - 2) << std::endl;
+    }
+    std::cout << formString.str();
+}
+
 void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
     std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
