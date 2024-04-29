@@ -3,6 +3,7 @@
 class SGBD {
    private:
     std::string searchLine;
+    std::string dataBase;
     bool isString = false;
 
    public:

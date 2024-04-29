@@ -14,3 +14,6 @@ run: main.exe
 
 clean: run
 	rm *.o
+
+debug:
+	g++ -g src/sgbd.cpp main.cpp -o main.exe
