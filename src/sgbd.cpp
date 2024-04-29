@@ -27,6 +27,7 @@ void SGBD::createDatabase(const std::string& db) {
     std::fstream file("out/" + db + ".txt", std::ios::in);
     if (file) {
         std::cout << "Esta base de datos ya ha sido creada" << std::endl;
+        file.close();
         return;
     } else {
         std::fstream newDb("out/" + db + ".txt", std::ios::out);
@@ -388,10 +389,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
     }
     // comprocacion de condicion
     int sizeContidions = 0;
-    std::string stringConditions;
-    std::string stringTypeConditions;
-    std::string stringOperator;
-    std::string stringNumber;
+    std::string stringConditions, stringTypeConditions, stringOperator, stringNumber;
     bool searchWord = true;
     int index = 0;
     if (condition != "") {
@@ -400,8 +398,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::cout << "Error en las condiciones" << std::endl;
             return;
         }
-        std::istringstream ssc(condition);
-        std::istringstream sfs(searchLine);
+        std::istringstream ssc(condition), sfs(searchLine);
         std::string wordLine;
         std::getline(sfs, wordLine, '#');
         std::getline(ssc, stringConditions, ' ');
@@ -465,38 +462,33 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             }
             scheme.close();
         } else {
-            if (sizeString(schemeToPass, '#') != sizeString(columns, ',')) {
-                std::cout << "La cantidad de parametros coincide con los de la tabla a pasar" << std::endl;
+            if (searchSheme(toPass) != "") {
+                std::cout << "Esta tabla ya existe" << std::endl;
                 return;
             }
             // recorre la column a traves de un getline y buscar que este en el esquema y guardar la siguetne palabra en un string
-            std::string oldString, newString, stringOfArchive;
+            std::string oldString, newString, strangeString, stringOfArchive;
             std::istringstream newStream(columns), newStreamArchive;
             while (std::getline(newStream, newString, ',')) {
                 newStreamArchive.str(searchLine);
                 std::getline(newStreamArchive, oldString, '#');
                 while (std::getline(newStreamArchive, oldString, '#')) {
                     if (oldString == newString) {
-                        std::getline(newStreamArchive, oldString, '#');
-                        stringOfArchive += oldString + " ";
+                        std::getline(newStreamArchive, strangeString, '#');
+                        stringOfArchive += "#" + oldString + "#" + strangeString;
                         break;
                     }
                     std::getline(newStreamArchive, oldString, '#');
                 }
             }
-            // el el archivo a psar recorrer similar al anterior guardando el tipp de datos y lo guardo en otro string
-            std::istringstream passToPass(schemeToPass);
-            std::string stringToPass, oldStrinStr;
-            std::getline(passToPass, oldStrinStr, '#');
-            while (std::getline(passToPass, oldStrinStr, '#')) {
-                std::getline(passToPass, oldStrinStr, '#');
-                stringToPass += oldStrinStr + " ";
-            }
-            // el resultado sabre si comparo los strings
-            if (stringToPass != stringOfArchive) {
-                std::cout << "Los tipos de datos de los parametros no concuerdan la tabla a pasar" << std::endl;
+            std::string partLine = toPass + stringOfArchive;
+            std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+            if (!scheme.is_open()) {
+                std::cout << "Error al abrir el archivo de esquemas" << std::endl;
                 return;
             }
+            scheme << partLine << std::endl;
+            scheme.close();
         }
         // arriba agregar comprobaciones para cosas de espeficos
         std::string nameToPass = "out/" + toPass + ".txt";

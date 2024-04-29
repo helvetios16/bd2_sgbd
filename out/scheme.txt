@@ -4,3 +4,4 @@ Movie_Ratings##string#"Patrick C"#int#"Heather"#int#"Bryan"#int#"Patrick T"#int#
 netflix#title#string#genre#string#language#string#imdb_score#float#premiere#date#runtime#int#year#int
 mundo#nombre#string#edad#int#vida#int
 otro_titanic#PassengerId#int#Survived#int#Pclass#int#Name#string#Sex#string#Age#int#SibSp#int#Parch#int#Ticket#string#Fare#float#Cabin#string#Embarked#char
+edades#Age#int
