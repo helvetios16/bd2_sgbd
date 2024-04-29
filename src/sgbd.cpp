@@ -23,6 +23,27 @@ SGBD::SGBD() {
     }
 }
 
+void SGBD::createDatabase(const std::string& db) {
+    std::fstream file("out/" + db + ".txt", std::ios::in);
+    if (file) {
+        std::cout << "Esta base de datos ya ha sido creada" << std::endl;
+        return;
+    } else {
+        std::fstream newDb("out/" + db + ".txt", std::ios::out);
+        newDb.close();
+    }
+}
+
+void SGBD::useDatabase(const std::string& db) {
+    std::fstream file("out/" + db + ".txt", std::ios::in);
+    if (file) {
+        this->database = "out/" + db + ".txt";
+    } else {
+        std::cout << "No existe esta base de datos" << std::endl;
+    }
+    file.close();
+}
+
 void SGBD::createTable(const std::string& archive) {
     std::string file = searchSheme(archive);
     if (file == "") {

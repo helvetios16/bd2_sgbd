@@ -3,11 +3,13 @@
 class SGBD {
    private:
     std::string searchLine;
-    std::string dataBase;
+    std::string database;
     bool isString = false;
 
    public:
     SGBD();
+    void createDatabase(const std::string& db);
+    void useDatabase(const std::string& db);
     void createTable(const std::string& archive);
     void addColumn(const std::string& information, const std::string& archive);
     void showtable(const std::string& archive);
