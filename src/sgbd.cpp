@@ -417,7 +417,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             return;
         }
     }
-    const int columnWidth = 8;
+    const int columnWidth = 16;
     int sizeArchive = sizeString(searchLine, '#');
     std::string namearchive = "out/" + archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::in);
@@ -429,28 +429,20 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
     std::fstream archiveToPass;
     if (toPass != "") {
         std::string schemeToPass = searchSheme(toPass);
-        if (schemeToPass == "") {
-            std::cout << "El archivo a pasar no se encuentra resgistrado" << std::endl;
-            return;
-        }
-        // poner condicional para * y especificos
         if (columns[0] == '*') {
-            if (sizeString(schemeToPass, '#') != sizeArchive) {
-                std::cout << "Los paremtro entre ambos esquemas no coinciden" << std::endl;
+            size_t posHastag = searchLine.find("#");
+            std::string partLine = toPass + this->searchLine.substr(posHastag);
+            std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+            if (!scheme.is_open()) {
+                std::cout << "Error al abrir el archivo de esquemas" << std::endl;
                 return;
             }
-            std::string oldArchive, newArchive;
-            std::istringstream sso(searchLine), ssn(schemeToPass);
-            std::getline(sso, oldArchive, '#');
-            std::getline(ssn, newArchive, '#');
-            while (std::getline(sso, oldArchive, '#') && std::getline(ssn, newArchive, '#')) {
-                std::getline(sso, oldArchive, '#');
-                std::getline(ssn, newArchive, '#');
-                if (oldArchive != newArchive) {
-                    std::cout << "Los tipos de datos entre archivo no coinciden" << std::endl;
-                    return;
-                }
+            if (schemeToPass == "") {
+                scheme << partLine << std::endl;
+            } else {
+                std::cout << "La tabla a crear ya se cuenta registrada tomar eso en cuenta." << std::endl;
             }
+            scheme.close();
         } else {
             if (sizeString(schemeToPass, '#') != sizeString(columns, ',')) {
                 std::cout << "La cantidad de parametros coincide con los de la tabla a pasar" << std::endl;
@@ -488,6 +480,10 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         // arriba agregar comprobaciones para cosas de espeficos
         std::string nameToPass = "out/" + toPass + ".txt";
         archiveToPass.open(nameToPass, std::ios::out | std::ios::app);
+        if (!archiveToPass.is_open()) {
+            std::cout << "Error en abrir archivo a pasar" << std::endl;
+            return;
+        }
         pass = true;
     }
     // Agregar comprobacion correcta de conditions al toPass y para la condicional

@@ -1,7 +1,7 @@
 all: clean
 
 main.exe: sgbd.o main.o
-	g++ sgbd.o main.o -o main.exe
+	g++ -g sgbd.o main.o -o main.exe
 
 main.o: main.cpp include/sgbd.h
 	g++ -c main.cpp
