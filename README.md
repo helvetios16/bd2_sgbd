@@ -1,7 +1,7 @@
 # TASK
 
 -   [x] Create constructor to start the scheme.txt
--   [] Change add method to change the use and creation of database as scheme.txt
+-   [-] Change add method to change the use and creation of database as scheme.txt and use in old class
 -   [x] Create table with anithny
 -   [x] Add column with name and value each for each
 -   [x] Add all columns with their respective names and values.

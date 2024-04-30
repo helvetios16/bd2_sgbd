@@ -48,7 +48,7 @@ void SGBD::useDatabase(const std::string& db) {
 void SGBD::createTable(const std::string& archive) {
     std::string file = searchSheme(archive);
     if (file == "") {
-        std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+        std::fstream scheme(this->database, std::ios::out | std::ios::app);
         if (!scheme.is_open()) {
             std::cout << "Error al abrir el archivo de esquemas" << std::endl;
             return;
@@ -77,7 +77,7 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
             passLine += "#" + word;
         }
     }
-    std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out);
+    std::fstream scheme(this->database, std::ios::in | std::ios::out);
     std::fstream temp("out/temp.txt", std::ios::out);
     if (!scheme.is_open() || !temp.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
@@ -95,8 +95,8 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
     }
     scheme.close();
     temp.close();
-    std::remove("out/scheme.txt");
-    std::rename("out/temp.txt", "out/scheme.txt");
+    std::remove(this->database.c_str());
+    std::rename("out/temp.txt", this->database.c_str());
 }
 
 void SGBD::showtable(const std::string& archive) {
@@ -154,7 +154,7 @@ void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
 }
 
 void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
-    std::fstream scheme("out/scheme.txt", std::ios::in | std::ios::out | std::ios::app);
+    std::fstream scheme(this->database, std::ios::in | std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -199,7 +199,7 @@ void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& var
 }
 
 void SGBD::addRegister(const std::string& archive, const std::string& variable) {
-    std::fstream scheme("out/scheme.txt", std::ios::in);
+    std::fstream scheme(this->database, std::ios::in);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -336,7 +336,7 @@ void SGBD::readCsvAllDirect(const std::string& csv, const std::string& variable)
             return;
         }
     }
-    std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+    std::fstream scheme(this->database, std::ios::out | std::ios::app);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
@@ -365,7 +365,7 @@ void SGBD::readCsvAllDirect(const std::string& csv, const std::string& variable)
 }
 
 std::string SGBD::searchSheme(const std::string& archive) {
-    std::fstream scheme("out/scheme.txt", std::ios::in);
+    std::fstream scheme(this->database, std::ios::in);
     if (!scheme.is_open()) {
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return "";
@@ -450,7 +450,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         if (columns[0] == '*') {
             size_t posHastag = searchLine.find("#");
             std::string partLine = toPass + this->searchLine.substr(posHastag);
-            std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+            std::fstream scheme(this->database, std::ios::out | std::ios::app);
             if (!scheme.is_open()) {
                 std::cout << "Error al abrir el archivo de esquemas" << std::endl;
                 return;
@@ -482,7 +482,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 }
             }
             std::string partLine = toPass + stringOfArchive;
-            std::fstream scheme("out/scheme.txt", std::ios::out | std::ios::app);
+            std::fstream scheme(this->database, std::ios::out | std::ios::app);
             if (!scheme.is_open()) {
                 std::cout << "Error al abrir el archivo de esquemas" << std::endl;
                 return;
