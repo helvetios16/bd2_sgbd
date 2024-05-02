@@ -819,12 +819,19 @@ void SGBD::shell() {
                 if (chain[1].front() == '"' && chain[1].back() == '"') chain[1] = chain[1].substr(1, chain[1].size() - 2);
                 useDatabase(chain[1]);
             } else if (chain.size() == 3 && chain[0] == "create" && chain[1] == "table") {  // luego ajustar para que funcione con el primer if y lo pueda subbdibir de database
-                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                createTable(chain[2]);
+                if (!haveSymbol(chain[2], '#'))
+                    std::cout << "No ingresar '#' en las columnas" << std::endl;
+                else {
+                    if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                    createTable(chain[2]);
+                }
             } else if (chain.size() == 5 && chain[0] == "alter" && chain[1] == "table" && chain[3] == "add") {
                 if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
                 if (chain[4].front() == '(' && chain[4].back() == ')') chain[4] = chain[4].substr(1, chain[4].size() - 2);
                 addColumn(chain[4], chain[2]);
+            } else if (chain.size() == 2 && chain[0] == "describe") {
+                if (chain[1].front() == '"' && chain[1].back() == '"') chain[1] = chain[1].substr(1, chain[1].size() - 2);
+                showtable(chain[1]);
             } else if (chain[0] == "read" && chain.size() == 3) {
                 if (chain[1].front() == '"' && chain[1].back() == '"') {
                     chain[1] = chain[1].substr(1, chain[1].size() - 2);
@@ -844,18 +851,14 @@ void SGBD::shell() {
                             chain[3] = chain[3].substr(1, chain[3].size() - 2);
                             addSchemeAllDirect(chain[2], chain[3]);
                         }
-                    }
-                } else {
-                    std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
-                }
-            } else if (chain[0] == "add" && chain.size() == 4) {
-                if (chain[1] == "data") {
-                    if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                    if (chain[3].front() == '(' && chain[3].back() == ')') {
-                        chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                        addRegister(chain[2], chain[3]);
+                    } else {
+                        std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
                     }
                 }
+            } else if (chain.size() == 5 && chain[0] == "insert" && chain[1] == "into" && chain[3] == "values") {
+                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                if (chain[4].front() == '(' && chain[4].back() == ')') chain[4] = chain[4].substr(1, chain[4].size() - 2);
+                addRegister(chain[2], chain[4]);
             } else if (chain[0] == "select" && chain.size() >= 4) {
                 if (chain[1].front() == '(' && chain[1].back() == ')') {
                     chain[1] = chain[1].substr(1, chain[1].size() - 2);
