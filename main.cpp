@@ -5,8 +5,9 @@
 
 int main(int argc, char const *argv[]) {
     SGBD sgbd;
-    sgbd.useDatabase("scheme");
-    sgbd.see("netflix", "*", "", "");
+    sgbd.shell();
+    // sgbd.useDatabase("scheme");
+    // sgbd.see("netflix", "*", "", "");
     // Disk disk;
     // disk.createDisk();
     return 0;
