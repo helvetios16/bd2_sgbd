@@ -832,6 +832,10 @@ void SGBD::shell() {
             } else if (chain.size() == 2 && chain[0] == "describe") {
                 if (chain[1].front() == '"' && chain[1].back() == '"') chain[1] = chain[1].substr(1, chain[1].size() - 2);
                 showtable(chain[1]);
+            } else if (chain.size() == 7 && chain[0] == "load" && chain[1] == "data" && chain[2] == "infile" && chain[4] == "into" && chain[5] == "table") {
+                if (chain[3].front() == '"' && chain[3].back() == '"') chain[3] = chain[3].substr(1, chain[3].size() - 2);
+                if (chain[6].front() == '"' && chain[6].back() == '"') chain[6] = chain[6].substr(1, chain[6].size() - 2);
+                addCsvToTable(chain[3], chain[6]);
             } else if (chain[0] == "read" && chain.size() == 3) {
                 if (chain[1].front() == '"' && chain[1].back() == '"') {
                     chain[1] = chain[1].substr(1, chain[1].size() - 2);
