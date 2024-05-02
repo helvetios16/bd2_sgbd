@@ -812,7 +812,13 @@ void SGBD::shell() {
                 }
                 chain.push_back(word);
             }
-            if (chain[0] == "read" && chain.size() == 3) {
+            if (chain.size() == 3 && chain[0] == "create" && chain[1] == "database") {
+                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                createDatabase(chain[2]);
+            } else if (chain.size() == 3 && chain[0] == "use" && chain[1] == "database") {
+                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
+                useDatabase(chain[2]);
+            } else if (chain[0] == "read" && chain.size() == 3) {
                 if (chain[1].front() == '"' && chain[1].back() == '"') {
                     chain[1] = chain[1].substr(1, chain[1].size() - 2);
                 }
