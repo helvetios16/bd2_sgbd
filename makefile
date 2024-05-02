@@ -11,7 +11,8 @@ disk.o: src/disk.cpp include/disk.h
 	g++ -c src/disk.cpp
 
 run: main.exe
-	./main.exe; rm *.o
+	./main.exe
+	rm *.o
 
 clean:
 	rm *.o

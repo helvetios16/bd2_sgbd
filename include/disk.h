@@ -1,8 +1,9 @@
 #pragma once
+#include <cstdint>
 #include <string>
 class Disk {
    private:
-    long long memory;
+    uint64_t memory;
     int platters;
     int surfaces;
     int tracks;
