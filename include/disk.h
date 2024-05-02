@@ -1,14 +1,16 @@
 #pragma once
 #include <string>
-#include <vector>
 class Disk {
    private:
-    std::vector<std::string> files;
-    int saucer;
-    int block;
-    int size;
+    long long memory;
+    int platters;
+    int surfaces;
+    int tracks;
+    int blocks;
+    int sectors;
 
    public:
     Disk();
+    void createDisk();
     void about();
 };

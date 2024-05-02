@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#define COLUMN_WIDTH 16
+
 SGBD::SGBD() {
     std::fstream file("out/scheme.txt", std::ios::in);
     if (!file) {
@@ -108,15 +110,14 @@ void SGBD::showtable(const std::string& archive) {
     std::string word;
     std::istringstream ss(file);
     std::stringstream formString;
-    const int columnWidth = 16;
     std::getline(ss, word, '#');
     std::cout << word << std::endl;
-    std::string stripes(columnWidth * 2, '-');
+    std::string stripes(COLUMN_WIDTH * 2, '-');
     std::cout << stripes << std::endl;
     while (std::getline(ss, word, '#')) {
-        formString << std::setw(columnWidth) << std::left << word.substr(0, columnWidth - 2);
+        formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
         std::getline(ss, word, '#');
-        formString << std::setw(columnWidth) << std::left << word.substr(0, columnWidth - 2) << std::endl;
+        formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2) << std::endl;
     }
     std::cout << formString.str();
 }
@@ -435,7 +436,6 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             return;
         }
     }
-    const int columnWidth = 16;
     int sizeArchive = sizeString(searchLine, '#');
     std::string namearchive = "out/" + archive + ".txt";
     std::fstream archiveTable(namearchive, std::ios::in);
@@ -508,10 +508,10 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         std::stringstream formString;
         if (!pass) {
             while (std::getline(ssi, fisrt, '#')) {
-                formString << std::setw(columnWidth) << std::left << fisrt.substr(0, columnWidth - 2);
+                formString << std::setw(COLUMN_WIDTH) << std::left << fisrt.substr(0, COLUMN_WIDTH - 2);
                 std::getline(ssi, fisrt, '#');
             }
-            std::string stripes(columnWidth * sizeArchive, '-');
+            std::string stripes(COLUMN_WIDTH * sizeArchive, '-');
             std::cout << formString.str() << std::endl;
             std::cout << stripes << std::endl;
         }
@@ -560,7 +560,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                             lineToPass += ",";
                         }
                     } else {
-                        formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                        formattedString << std::setw(COLUMN_WIDTH) << std::left << momentWord.substr(0, COLUMN_WIDTH - 2);
                     }
                     if (endOfLine) break;
                 } else {
@@ -584,7 +584,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                                 lineToPass += ",";
                             }
                         } else {
-                            formattedString << std::setw(columnWidth) << std::left << momentWord.substr(0, columnWidth - 2);
+                            formattedString << std::setw(COLUMN_WIDTH) << std::left << momentWord.substr(0, COLUMN_WIDTH - 2);
                         }
                         if (endOfLine) break;
                     }
@@ -614,11 +614,11 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         std::stringstream formattedColumn;
         // agregar condiciona para sie sta el archivo
         while (std::getline(sws, wordColumn, ',')) {
-            formattedColumn << std::setw(columnWidth) << std::left << wordColumn.substr(0, columnWidth - 2);
+            formattedColumn << std::setw(COLUMN_WIDTH) << std::left << wordColumn.substr(0, COLUMN_WIDTH - 2);
             lineNumber += getWordPositionOfLineScheme(wordColumn, searchLine, '#') + " ";
         }
         if (!pass) {
-            std::string stripes(columnWidth * sizeColumn, '-');
+            std::string stripes(COLUMN_WIDTH * sizeColumn, '-');
             std::cout << formattedColumn.str() << std::endl;
             std::cout << stripes << std::endl;
         }
@@ -671,7 +671,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                             lineToPass += ",";
                         }
                     } else {
-                        formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
+                        formattedData << std::setw(COLUMN_WIDTH) << std::left << wordData.substr(0, COLUMN_WIDTH - 2);
                     }
                     if (endOfLine) break;
                 } else {
@@ -700,7 +700,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                                 lineToPass += ",";
                             }
                         } else {
-                            formattedData << std::setw(columnWidth) << std::left << wordData.substr(0, columnWidth - 2);
+                            formattedData << std::setw(COLUMN_WIDTH) << std::left << wordData.substr(0, COLUMN_WIDTH - 2);
                         }
                         if (endOfLine) break;
                     }

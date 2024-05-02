@@ -1,7 +1,5 @@
-all: clean
-
-main.exe: sgbd.o main.o
-	g++ -g sgbd.o main.o -o main.exe
+main.exe: disk.o sgbd.o  main.o
+	g++ -g disk.o sgbd.o main.o -o main.exe
 
 main.o: main.cpp include/sgbd.h
 	g++ -c main.cpp
@@ -9,10 +7,13 @@ main.o: main.cpp include/sgbd.h
 sgbd.o: src/sgbd.cpp include/sgbd.h
 	g++ -c src/sgbd.cpp
 
-run: main.exe
-	./main.exe
+disk.o: src/disk.cpp include/disk.h
+	g++ -c src/disk.cpp
 
-clean: run
+run: main.exe
+	./main.exe; rm *.o
+
+clean:
 	rm *.o
 
 debug:
