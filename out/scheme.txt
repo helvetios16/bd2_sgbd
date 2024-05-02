@@ -6,3 +6,4 @@ mundo#nombre#string#edad#int#vida#int
 otro_titanic#PassengerId#int#Survived#int#Pclass#int#Name#string#Sex#string#Age#int#SibSp#int#Parch#int#Ticket#string#Fare#float#Cabin#string#Embarked#char
 edades#Age#int
 Hola#nombre#string
+hello_world#nombre#string
