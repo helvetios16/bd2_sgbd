@@ -12,6 +12,8 @@
 -   [x] Conditions add type value to compare strings
 -   [-] Configure the shell more (megatron)
 -   [] Create disk simulation.
+-   [] Change method to read and write registers
+-   [] Build a class to manage the information
 
 # ADDITIONAL TASK
 
