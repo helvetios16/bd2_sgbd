@@ -178,8 +178,7 @@ void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& var
         return;
     }
     std::istringstream ssv(variable);
-    std::string word;
-    std::string lineNameVariable;
+    std::string word, lineNameVariable;
     int index = 1;
     while (std::getline(ssv, word, ',')) {
         if (index % 2 == 0 && !validType(word)) {
@@ -206,8 +205,7 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
         return;
     }
     // en varible verificar que este entre () auqneu se puede dejar a la shell
-    std::string lineScheme;
-    std::string lineArchive;
+    std::string lineScheme, lineArchive;
     bool table = false;
     while (std::getline(scheme, lineScheme)) {
         std::istringstream ss(lineScheme);
@@ -223,8 +221,7 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
                 scheme.close();
                 return;
             }
-            std::string nextWord;
-            std::string secondaryWord;
+            std::string nextWord, secondaryWord;
             std::istringstream ssv(variable);
             while (std::getline(ss, nextWord, '#')) {
                 std::getline(ss, nextWord, '#');
@@ -244,11 +241,9 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
         return;
     }
     scheme.close();
-    std::string nameArchive = "out/" + archive + ".txt";
-    std::fstream archiveTable(nameArchive, std::ios::out | std::ios::app);
+    std::fstream archiveTable("out/" + archive + ".txt", std::ios::out | std::ios::app);
     archiveTable << variable << std::endl;
     archiveTable.close();
-    // pasar los datos al documento
 }
 
 bool SGBD::validType(const std::string& type) {
