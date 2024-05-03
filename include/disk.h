@@ -3,7 +3,7 @@
 #include <string>
 class Disk {
    private:
-    uint64_t memory;
+    uint64_t memory;  // long long
     int platters;
     int surfaces;
     int tracks;
@@ -12,6 +12,7 @@ class Disk {
 
    public:
     Disk();
-    void createDisk();
+    void create();
+    void remove();
     void about();
 };
