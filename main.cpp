@@ -2,14 +2,16 @@
 
 #include "include/disk.h"
 #include "include/sgbd.h"
+#include "include/shell.h"
 
 int main(int argc, char const *argv[]) {
     // SGBD sgbd;
     // sgbd.shell();
-    // sgbd.useDatabase("scheme");
-    // sgbd.see("netflix", "*", "", "");
-    Disk disk;
-    disk.create();
+    // Disk disk;
+    // disk.getMemory();
+    // disk.create();
     // disk.remove();
+    Shell shell;
+    shell.shell();
     return 0;
 }
