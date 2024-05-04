@@ -125,9 +125,11 @@ void SGBD::showtable(const std::string& archive) {
     std::stringstream formString;
     std::getline(ss, word, '#');
     std::cout << word << std::endl;
-    std::string stripes(COLUMN_WIDTH * 2, '-');
+    std::string stripes(COLUMN_WIDTH * 3, '-');
     std::cout << stripes << std::endl;
     while (std::getline(ss, word, '#')) {
+        formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
+        std::getline(ss, word, '#');
         formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
         std::getline(ss, word, '#');
         formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2) << std::endl;

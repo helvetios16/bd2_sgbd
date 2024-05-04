@@ -7,7 +7,7 @@
 int main(int argc, char const *argv[]) {
     SGBD sgbd;
     sgbd.useDatabase("schema");
-    sgbd.addColumn("nombre string 64 ,edad int ,altura float", "prueba");
+    // sgbd.addColumn("nombre string 64 ,edad int ,altura float", "prueba");
     sgbd.showtable("prueba");
     // Disk disk;
     // disk.getMemory();
