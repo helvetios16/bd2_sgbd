@@ -64,26 +64,29 @@ void SGBD::createTable(const std::string& archive) {
 
 void SGBD::addColumn(const std::string& information, const std::string& archive) {
     std::istringstream ss(information);
-    std::string line, word, passLine;
+    std::string line, word, otherWord, passLine;
     while (std::getline(ss, line, ',')) {
-        int index = 0;
         std::istringstream ssi(line);
-        while (ssi >> word) {
-            index++;
-            if (index % 2 == 0) {
-                if (!(word == "string" || word == "int" || word == "float" || word == "date" || word == "bool")) {
-                    std::cout << "Tiene que ingresar un tipo de valor a la columna" << std::endl;
-                    return;
-                }
-                if (word == "string") {
-                    ssi >> word;
-                    if (isdigit(word[0])) {
-                        std::cout << "Se tiene que registrar un numero para las cadenas de texto " << std::endl;
-                        return;
-                    }
-                }
+        while (std::getline(ssi, word, ' ')) {
+            std::getline(ssi, otherWord, ' ');
+            if (!validType(otherWord)) {
+                std::cout << "El tipo de dato no es valido" << std::endl;
+                return;
             }
-            passLine += "#" + word;
+            if (otherWord == "int" || otherWord == "float") {
+                passLine += "#" + word + "#" + otherWord + "#" + "8";
+            } else if (otherWord == "string" || otherWord == "char") {
+                passLine += "#" + word + "#" + otherWord;
+                std::getline(ssi, otherWord, ' ');
+                if (!isdigit(otherWord[0])) {
+                    std::cout << "Se tiene que registrar un numero para las cadenas de texto " << std::endl;
+                    return;
+                } else {
+                    passLine += "#" + otherWord;
+                }
+            } else if (otherWord == "bool") {
+                passLine += "#" + word + "#" + otherWord + "#" + "1";
+            }
         }
     }
     std::fstream scheme(this->database, std::ios::in | std::ios::out);
