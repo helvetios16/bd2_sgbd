@@ -1,1 +1,1 @@
-prueba
+prueba#nombre#string#64#edad#int#8#altura#float#8
