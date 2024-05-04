@@ -21,4 +21,4 @@ clean:
 	rm *.o
 
 debug:
-	g++ -g src/sgbd.cpp main.cpp -o main.exe
+	g++ -g src/sgbd.cpp src/disk.cpp src/shell.cpp main.cpp -o main.exe
