@@ -3,32 +3,31 @@
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
-#include <string>
+#include <sstream>
 
 Disk::Disk() {
-    this->memory = 85899934592;           // 8gb
+    this->memory = 85899934592 / 2;       // 8gb
     this->platters = 4;                   // 2gb per platter
     this->surfaces = this->platters * 2;  // 1g per surface
-    this->tracks = 16384;                 // 64kb per track
-    this->sectors = 1024;                 // 640 bytes per sector
+    this->tracks = 20;                    // 64kb per track
+    this->sectors = 4;                    // 640 bytes per sector
+    this->blocks = 5;                     // 1mb per block
+    this->memoryPerBlock = 1024 * 1024;
+    this->memoryPerSector = 640;
 }
 
-void Disk::create() {
-    std::string path = "disk";
-    std::string platters = "platter";
-    std::string surfaces = "surface";
-    std::string tracks = "track";
-    std::string sectors = "sector";
-    int sizePlatter = 4;
-    int sizeSurface = 8 / sizePlatter;
-    int sizeTrack = 20;
-    int sizeSector = 4;
+void Disk::create(int memory, int platter, int track, int sector) {
+    std::string path = "disk", platters = "platter", surfaces = "surface", tracks = "track", sectors = "sector";
+    int sizeMemory = memory == -1 ? this->memory : memory;
+    int sizePlatter = platter == -1 ? this->platters : platter;
+    int sizeTrack = track == -1 ? this->tracks : track;
+    int sizeSector = sector == -1 ? this->sectors : sector;
     if (!std::filesystem::exists(path)) {
         if (std::filesystem::create_directory(path)) {
             for (int i = 0; i < sizePlatter; i++) {
                 std::string platter = path + "/" + platters + " " + std::to_string(i);
                 if (std::filesystem::create_directory(platter)) {
-                    for (int j = 0; j < sizeSurface; j++) {
+                    for (int j = 0; j < 2; j++) {  // 2 surfaces per platter
                         std::string surface = platter + "/" + surfaces + " " + std::to_string(j);
                         if (std::filesystem::create_directory(surface)) {
                             for (int k = 0; k < sizeTrack; k++) {

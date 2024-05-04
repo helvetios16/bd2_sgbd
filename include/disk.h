@@ -1,18 +1,23 @@
 #pragma once
-#include <cstdint>
+#include <iostream>
 #include <string>
 class Disk {
    private:
-    uint64_t memory;  // long long
+    long long memory;
     int platters;
     int surfaces;
     int tracks;
     int blocks;
     int sectors;
+    int memoryPerBlock;
+    int memoryPerSector;
 
    public:
     Disk();
-    void create();
+    void create(int memory, int platters, int tracks, int sectors);
     void remove();
     void about();
+    void getMemory() {
+        std::cout << this->memory << std::endl;
+    }
 };
