@@ -26,6 +26,5 @@ class SGBD {
     bool checkParementer(const std::string& operatorSymbol, const std::string& number, const std::string& numberToCheck);
     bool haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo);
     std::string getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol);
-    void shell();
     bool haveSymbol(const std::string& word, const char& character);
 };

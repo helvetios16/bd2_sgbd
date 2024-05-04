@@ -75,6 +75,13 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
                     std::cout << "Tiene que ingresar un tipo de valor a la columna" << std::endl;
                     return;
                 }
+                if (word == "string") {
+                    ssi >> word;
+                    if (isdigit(word[0])) {
+                        std::cout << "Se tiene que registrar un numero para las cadenas de texto " << std::endl;
+                        return;
+                    }
+                }
             }
             passLine += "#" + word;
         }
@@ -771,135 +778,6 @@ std::string SGBD::getWordPositionOfLineScheme(const std::string& word, const std
         std::getline(ssi, words, symbol);
     }
     return std::to_string(index);
-}
-
-void SGBD::shell() {
-    while (true) {
-        std::string search;
-        std::cout << ">> ";
-        std::getline(std::cin, search);
-        if (search == "exit") {
-            break;
-        } else if (search == "ls") {
-            system("ls");
-        } else if (search == "clear") {
-            system("clear");
-        } else if (search != "") {
-            std::istringstream ss(search);
-            std::string word, nextWord;
-            std::vector<std::string> chain;
-            while (ss >> word) {
-                if (chain.size() > 0 && word.front() == '(' && word.back() != ')') {
-                    nextWord = word;
-                    while (ss >> word) {
-                        nextWord += " " + word;
-                        if (nextWord.front() == '(' && nextWord.back() == ')') break;
-                    }
-                    word = nextWord;
-                }
-                if (chain.size() > 0 && word.front() == '"' && word.back() != '"') {
-                    nextWord = word;
-                    while (ss >> word) {
-                        nextWord += " " + word;
-                        if (nextWord.front() == '"' && nextWord.back() == '"') break;
-                    }
-                    word = nextWord;
-                }
-                chain.push_back(word);
-            }
-            if (chain.size() == 3 && chain[0] == "create" && chain[1] == "database") {
-                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                createDatabase(chain[2]);
-            } else if (chain.size() == 2 && chain[0] == "use") {
-                if (chain[1].front() == '"' && chain[1].back() == '"') chain[1] = chain[1].substr(1, chain[1].size() - 2);
-                useDatabase(chain[1]);
-            } else if (chain.size() == 3 && chain[0] == "create" && chain[1] == "table") {  // luego ajustar para que funcione con el primer if y lo pueda subbdibir de database
-                if (!haveSymbol(chain[2], '#'))
-                    std::cout << "No ingresar '#' en las columnas" << std::endl;
-                else {
-                    if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                    createTable(chain[2]);
-                }
-            } else if (chain.size() == 5 && chain[0] == "alter" && chain[1] == "table" && chain[3] == "add") {
-                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                if (chain[4].front() == '(' && chain[4].back() == ')') chain[4] = chain[4].substr(1, chain[4].size() - 2);
-                addColumn(chain[4], chain[2]);
-            } else if (chain.size() == 2 && chain[0] == "describe") {
-                if (chain[1].front() == '"' && chain[1].back() == '"') chain[1] = chain[1].substr(1, chain[1].size() - 2);
-                showtable(chain[1]);
-            } else if (chain.size() == 7 && chain[0] == "load" && chain[1] == "data" && chain[2] == "infile" && chain[4] == "into" && chain[5] == "table") {
-                if (chain[3].front() == '"' && chain[3].back() == '"') chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                if (chain[6].front() == '"' && chain[6].back() == '"') chain[6] = chain[6].substr(1, chain[6].size() - 2);
-                addCsvToTable(chain[3], chain[6]);
-            } else if (chain[0] == "read" && chain.size() == 3) {
-                if (chain[1].front() == '"' && chain[1].back() == '"') {
-                    chain[1] = chain[1].substr(1, chain[1].size() - 2);
-                }
-                size_t csvPos = chain[1].find(".csv");
-                if (csvPos != std::string::npos && csvPos > 0 && csvPos == chain[1].size() - 4) {
-                    if (chain[2].front() == '(' && chain[2].back() == ')') {
-                        chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                        readCsvAllDirect(chain[1], chain[2]);
-                    }
-                }
-            } else if (chain[0] == "create" && chain.size() == 4) {
-                if (chain[1] == "scheme") {
-                    if (haveSymbol(chain[2], '#')) {
-                        if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                        if (chain[3].front() == '(' && chain[3].back() == ')') {
-                            chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                            addSchemeAllDirect(chain[2], chain[3]);
-                        }
-                    } else {
-                        std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
-                    }
-                }
-            } else if (chain.size() == 5 && chain[0] == "insert" && chain[1] == "into" && chain[3] == "values") {
-                if (chain[2].front() == '"' && chain[2].back() == '"') chain[2] = chain[2].substr(1, chain[2].size() - 2);
-                if (chain[4].front() == '(' && chain[4].back() == ')') chain[4] = chain[4].substr(1, chain[4].size() - 2);
-                addRegister(chain[2], chain[4]);
-            } else if (chain[0] == "select" && chain.size() >= 4) {
-                if (chain[1].front() == '(' && chain[1].back() == ')') {
-                    chain[1] = chain[1].substr(1, chain[1].size() - 2);
-                }
-                if (chain[2] == "from") {
-                    if (haveSymbol(chain[3], '#')) {
-                        if (chain[3].front() == '"' && chain[3].back() == '"') chain[3] = chain[3].substr(1, chain[3].size() - 2);
-                        if (chain.size() == 4) {
-                            see(chain[3], chain[1], "", "");
-                        } else if (chain.size() >= 6) {
-                            if (chain[4] == "where") {
-                                if (chain[5].front() == '(' && chain[5].back() == ')') {
-                                    chain[5] = chain[5].substr(1, chain[5].size() - 2);
-                                    if (chain.size() == 6) {
-                                        see(chain[3], chain[1], chain[5], "");
-                                    } else if (chain.size() == 8) {
-                                        if (chain[6] == "|" || chain[6] == "->") {
-                                            if (haveSymbol(chain[7], '#')) {
-                                                see(chain[3], chain[1], chain[5], chain[7]);
-                                            } else {
-                                                std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
-                                            }
-                                        }
-                                    }
-                                }
-                            } else if (chain[4] == "|" || chain[4] == "->") {
-                                std::cout << "yes" << std::endl;
-                                if (haveSymbol(chain[5], '#')) {
-                                    if (chain[5].front() == '"' && chain[5].back() == '"') chain[5] = chain[5].substr(1, chain[5].size() - 2);
-                                    see(chain[3], chain[1], "", chain[5]);
-                                } else {
-                                    std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
-                                }
-                            }
-                        }
-                    } else {
-                        std::cout << "No ingresar '#' en el nombre de la tabla" << std::endl;
-                    }
-                }
-            }
-        }
-    }
 }
 
 bool SGBD::haveSymbol(const std::string& word, const char& character) {
