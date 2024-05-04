@@ -161,50 +161,6 @@ void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
     archiveCsv.close();
 }
 
-void SGBD::addSchemeAllDirect(const std::string& archive, const std::string& variable) {
-    std::fstream scheme(this->database, std::ios::in | std::ios::out | std::ios::app);
-    if (!scheme.is_open()) {
-        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
-        return;
-    }
-    // comprobar si el nombre de la tabla ya esta dentro del esquemas
-    std::string lineScheme;
-    while (std::getline(scheme, lineScheme)) {
-        std::istringstream ss(lineScheme);
-        std::string firstWord;
-        if (std::getline(ss, firstWord, '#') && firstWord == archive) {
-            std::cout << "El nombre de la tabla ya esta registrado en el esquema" << std::endl;
-            scheme.close();
-            return;
-        }
-    }
-    // verficar si la relacion para pasar la tabla conicnide con variable,tipo (...)
-    if (variable == "") {
-        std::cout << "Ingrese la relacion(es) \"variable,tipo\" que tendra la tabla" << std::endl;
-        scheme.close();
-        return;
-    }
-    std::istringstream ssv(variable);
-    std::string word, lineNameVariable;
-    int index = 1;
-    while (std::getline(ssv, word, ',')) {
-        if (index % 2 == 0 && !validType(word)) {
-            std::cout << "Ingrese correctamente la relacion(es) \"variable,tipo\"" << std::endl;
-            scheme.close();
-            return;
-        }
-        index++;
-        lineNameVariable += "#" + word;
-    }
-    // pasar la infomacion al esquema
-    scheme.clear();
-    scheme << archive << lineNameVariable << std::endl;
-    if (scheme.fail()) {
-        std::cout << "Error en editar el archivo" << std::endl;
-    }
-    scheme.close();
-}
-
 void SGBD::addRegister(const std::string& archive, const std::string& variable) {
     std::fstream scheme(this->database, std::ios::in);
     if (!scheme.is_open()) {
