@@ -153,7 +153,7 @@ void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
         std::cout << "Error al abrir el archivo csv" << std::endl;
         return;
     }
-    std::string line;
+    std::string line, otherWord, word;
     std::getline(archiveCsv, line);
     int sizeFile = sizeString(file, '#');
     if (sizeFile != sizeString(line, ',')) {
@@ -162,9 +162,32 @@ void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
         archiveTable.close();
         return;
     }
+    std::stringstream formString;
     while (std::getline(archiveCsv, line)) {
-        archiveTable << line << std::endl;
+        std::istringstream ss(file);
+        std::istringstream sss(line);
+        std::getline(ss, otherWord, '#');
+        while (std::getline(ss, otherWord, '#')) {
+            std::getline(ss, otherWord, '#');
+            std::getline(ss, otherWord, '#');
+            std::getline(sss, word, ',');
+            bool endOfLine = false;
+            if (word.size() >= 1 && word.front() == '"' && word.back() != '"') {
+                size_t nextCommaPoss = line.find("\",", sss.tellg());
+                if (nextCommaPoss != std::string::npos) {
+                    word += "," + line.substr(sss.tellg(), nextCommaPoss - sss.tellg() + 1);
+                    sss.seekg(nextCommaPoss + 2);
+                } else {
+                    word += "," + line.substr(ss.tellg());
+                    endOfLine = true;
+                }
+            }
+            formString << std::setw(std::stoi(otherWord)) << std::left << word;
+            if (endOfLine) break;
+        }
+        formString << std::endl;
     }
+    archiveTable << formString.str();
     archiveTable.close();
     archiveCsv.close();
 }
@@ -232,7 +255,6 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
     while (std::getline(ssv, input, '#')) {
         std::getline(ssv, input, '#');
         std::getline(ssv, input, '#');
-        int numberOuput = std::stoi(input);
         std::getline(svs, otherInput, ',');
         formString << std::setw(std::stoi(input)) << std::left << otherInput;
     }
@@ -258,7 +280,6 @@ int SGBD::sizeString(const std::string& line, const char& symbol) {
 
 bool SGBD::checkType(const std::string& type, const std::string& variable) {
     if (type == "string") {
-        // si la profesora dice que el string este entre comillas agregar estrutucracion
         return true;
     } else if (type == "int" || type == "float") {
         return convertToNumber(variable, type);
