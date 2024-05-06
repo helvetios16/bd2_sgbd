@@ -229,7 +229,7 @@ int SGBD::sizeString(const std::string& line, const char& symbol) {
     while (std::getline(ss, word, symbol)) {
         index++;
     }
-    if (symbol == '#') return (index / 2);
+    if (symbol == '#') return (index / 3);
     return index;
 }
 
@@ -640,7 +640,7 @@ bool SGBD::checkParementer(const std::string& number, const std::string& operato
     }
     return false;
 }
-// linea con comas y linea con hashtag
+
 bool SGBD::haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo) {
     std::istringstream sso(lineOne);
     std::string wordOne, wordTwo;
