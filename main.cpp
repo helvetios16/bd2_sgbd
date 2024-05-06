@@ -9,8 +9,9 @@ int main(int argc, char const *argv[]) {
     sgbd.useDatabase("schema");
     // sgbd.addColumn("nombre string 64 ,edad int ,altura float", "prueba");
     // sgbd.showtable("prueba");
-    std::cout << sgbd.sizeString("prueba#nombre#string#64#edad#int#8#altura#float#8#year#int#8", '#') << std::endl;
-
+    // std::cout << sgbd.sizeString("prueba#nombre#string#64#edad#int#8#altura#float#8#year#int#8", '#') << std::endl;
+    // sgbd.addCsvToTable("Titanic.csv", "_tng");
+    sgbd.addRegister("prueba", "Juan, 20, 1.70");
     // Disk disk;
     // disk.getMemory();
     // disk.create();

@@ -175,8 +175,7 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
         std::cout << "Error al abrir el archivo de esquemas" << std::endl;
         return;
     }
-    // en varible verificar que este entre () auqneu se puede dejar a la shell
-    std::string lineScheme, lineArchive;
+    std::string lineScheme, lineArchive, lineOfArchive;
     bool table = false;
     while (std::getline(scheme, lineScheme)) {
         std::istringstream ss(lineScheme);
@@ -184,6 +183,7 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
         if (std::getline(ss, firstWord, '#') && firstWord == archive) {
             // validar que se encuentre el nombre de la tabla
             table = true;
+            lineOfArchive = lineScheme;
             int sizeTable = sizeString(lineScheme, '#');
             int sizeVariable = sizeString(variable, ',');
             // comrpobar que la cantidad de datos a registrar coninciar en cierto punto la cantdidad de columnas de la tabla}
@@ -203,6 +203,18 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
                     scheme.close();
                     return;
                 }
+                if (nextWord == "string") {
+                    int sizeWord = secondaryWord.size();
+                    std::getline(ss, nextWord, '#');
+                    if (sizeWord > std::stoi(nextWord)) {
+                        std::cout << "El tamaño de la cadena es mayor al permitido" << std::endl;
+                        scheme.close();
+                        return;
+                    }
+                    continue;
+                }
+                // la tercera palabras son numeros entonces lo pasamos
+                std::getline(ss, nextWord, '#');
             }
         }
         if (table) break;
@@ -213,7 +225,18 @@ void SGBD::addRegister(const std::string& archive, const std::string& variable) 
     }
     scheme.close();
     std::fstream archiveTable("out/" + archive + ".txt", std::ios::out | std::ios::app);
-    archiveTable << variable << std::endl;
+    std::string input, otherInput;
+    std::stringstream formString;
+    std::istringstream ssv(lineOfArchive), svs(variable);
+    std::getline(ssv, input, '#');
+    while (std::getline(ssv, input, '#')) {
+        std::getline(ssv, input, '#');
+        std::getline(ssv, input, '#');
+        int numberOuput = std::stoi(input);
+        std::getline(svs, otherInput, ',');
+        formString << std::setw(std::stoi(input)) << std::left << otherInput;
+    }
+    archiveTable << formString.str() << std::endl;
     archiveTable.close();
 }
 
