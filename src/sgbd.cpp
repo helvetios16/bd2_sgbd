@@ -503,9 +503,14 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             while (std::getline(sssv, momentWord, '#')) {
                 for (int j = 0; j < 2; ++j) std::getline(sssv, momentWord, '#');
                 if (searchWord) {
-                    std::string tempData = forFuture.substr(0, std::stoi(momentWord));
-                    formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
-                    forFuture = forFuture.substr(std::stoi(momentWord));
+                    if (pass) {
+                        lineToPass += forFuture;
+                        break;
+                    } else {
+                        std::string tempData = forFuture.substr(0, std::stoi(momentWord));
+                        formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                        forFuture = forFuture.substr(std::stoi(momentWord));
+                    }
                 } else {  // sis searchWord es falso es decir hay condicional
                     if (isOnlySpaces(stringFuture))
                         break;
