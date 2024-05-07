@@ -504,7 +504,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 if (searchWord) {
                     continue;
                 } else {  // sis searchWord es falso
-                    if (stringFuture == "") break;
+                    if (isOnlySpaces(stringFuture)) break;
                     std::string tempData = forFuture.substr(0, std::stoi(momentWord));
                     formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
                     forFuture = forFuture.substr(std::stoi(momentWord));
