@@ -484,18 +484,18 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             }
             int counterToComma = 0;
             std::string lineToPass;
-            std::string futureLine = this->searchLine;
             std::string forFuture = lineTable;
-            std::istringstream sssv(futureLine);
+            std::istringstream sssv(this->searchLine);
             std::getline(sssv, momentWord, '#');
             while (std::getline(sssv, momentWord, '#')) {
                 std::getline(sssv, momentWord, '#');
                 std::getline(sssv, momentWord, '#');
-                std::string tempData = forFuture.substr(0, std::stoi(momentWord) - 1);
+                std::string tempData = forFuture.substr(0, std::stoi(momentWord));
                 formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
-                forFuture = forFuture.substr(std::stoi(momentWord) + 1);
+                forFuture = forFuture.substr(std::stoi(momentWord));
             }
             std::cout << formattedString.str() << std::endl;
+
             // while (std::getline(ss, momentWord, ',')) {
             //     bool endOfLine = false;
             //     if (searchWord) {
