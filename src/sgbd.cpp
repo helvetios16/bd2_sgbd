@@ -1,5 +1,7 @@
 #include "../include/sgbd.h"
 
+#include <algorithm>
+#include <cctype>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
@@ -453,8 +455,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         if (!pass) {
             while (std::getline(ssi, fisrt, '#')) {
                 formString << std::setw(COLUMN_WIDTH) << std::left << fisrt.substr(0, COLUMN_WIDTH - 2);
-                std::getline(ssi, fisrt, '#');
-                std::getline(ssi, fisrt, '#');
+                for (int j = 0; j < 2; ++j) std::getline(ssi, fisrt, '#');
             }
             std::string stripes(COLUMN_WIDTH * sizeArchive, '-');
             std::cout << formString.str() << std::endl;
@@ -462,27 +463,36 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         }
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable);
-            std::string momentWord;
+            std::string momentWord, problemWord;
             std::stringstream formattedString;
-            std::istringstream ssb(lineTable);
+            std::istringstream ssb(lineTable), svss(this->searchLine);
             std::string stringFuture;
+            std::string stringPower = lineTable;
             if (!searchWord) {
-                bool endOfLine = false;
+                std::getline(svss, problemWord, '#');
                 for (int i = 0; i < index; i++) {
-                    std::getline(ssb, stringFuture, ',');
-                    if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
-                        size_t nextCommaPos = lineTable.find("\",", ssb.tellg());
-                        if (nextCommaPos != std::string::npos) {
-                            stringFuture += "," + lineTable.substr(ssb.tellg(), nextCommaPos - ssb.tellg() + 1);
-                            ssb.seekg(nextCommaPos + 2);
-                        } else {
-                            stringFuture += "," + lineTable.substr(ssb.tellg());
-                            endOfLine = true;
-                        }
-                    }
-                    if (endOfLine) break;
+                    for (int j = 0; j < 3; ++j) std::getline(svss, problemWord, '#');
+                    stringFuture = stringPower.substr(0, std::stoi(problemWord));
+                    stringPower = stringPower.substr(std::stoi(problemWord));
                 }
             }
+            // if (!searchWord) {
+            //     bool endOfLine = false;
+            //     for (int i = 0; i < index; i++) {
+            //         std::getline(ssb, stringFuture, ',');
+            //         if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
+            //             size_t nextCommaPos = lineTable.find("\",", ssb.tellg());
+            //             if (nextCommaPos != std::string::npos) {
+            //                 stringFuture += "," + lineTable.substr(ssb.tellg(), nextCommaPos - ssb.tellg() + 1);
+            //                 ssb.seekg(nextCommaPos + 2);
+            //             } else {
+            //                 stringFuture += "," + lineTable.substr(ssb.tellg());
+            //                 endOfLine = true;
+            //             }
+            //         }
+            //         if (endOfLine) break;
+            //     }
+            // }
             int counterToComma = 0;
             std::string lineToPass;
             std::string forFuture = lineTable;
@@ -491,12 +501,16 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             while (std::getline(sssv, momentWord, '#')) {
                 std::getline(sssv, momentWord, '#');
                 std::getline(sssv, momentWord, '#');
-                std::string tempData = forFuture.substr(0, std::stoi(momentWord));
-                formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
-                forFuture = forFuture.substr(std::stoi(momentWord));
+                if (searchWord) {
+                    continue;
+                } else {  // sis searchWord es falso
+                    if (stringFuture == "") break;
+                    std::string tempData = forFuture.substr(0, std::stoi(momentWord));
+                    formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                    forFuture = forFuture.substr(std::stoi(momentWord));
+                }
             }
-            std::cout << formattedString.str() << std::endl;
-
+            if (formattedString.str() != "") std::cout << formattedString.str() << std::endl;
             // while (std::getline(ss, momentWord, ',')) {
             //     bool endOfLine = false;
             //     if (searchWord) {
@@ -737,4 +751,8 @@ std::string SGBD::getWordPositionOfLineScheme(const std::string& word, const std
 
 bool SGBD::haveSymbol(const std::string& word, const char& character) {
     return word.find(character) == std::string::npos;
+}
+
+bool SGBD::isOnlySpaces(const std::string& word) {
+    return std::all_of(word.begin(), word.end(), [](char c) { return std::isspace(c); });
 }
