@@ -338,6 +338,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
     std::string stringConditions, stringTypeConditions, stringOperator, stringNumber;
     bool searchWord = true;
     int index = 0;
+    // falta ajustar la funcion para que si recive un string puede aggarar mas de una palbra talvez usando comillas
     if (condition != "") {
         sizeContidions = sizeString(condition, ' ');
         if (sizeContidions != 3) {
@@ -504,10 +505,13 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 if (searchWord) {
                     continue;
                 } else {  // sis searchWord es falso
-                    if (isOnlySpaces(stringFuture)) break;
-                    std::string tempData = forFuture.substr(0, std::stoi(momentWord));
-                    formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
-                    forFuture = forFuture.substr(std::stoi(momentWord));
+                    if (isOnlySpaces(stringFuture))
+                        break;
+                    else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
+                        std::string tempData = forFuture.substr(0, std::stoi(momentWord));
+                        formattedString << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                        forFuture = forFuture.substr(std::stoi(momentWord));
+                    }
                 }
             }
             if (formattedString.str() != "") std::cout << formattedString.str() << std::endl;
@@ -707,7 +711,14 @@ bool SGBD::checkParementer(const std::string& number, const std::string& operato
         }
     } else {
         if (operatorSymbol == "==") {
-            return number == numberToCheck;
+            std::istringstream sso(number), ssf(numberToCheck);
+            std::string wordOne, wordTwo;
+            while (sso >> wordOne && ssf >> wordTwo) {
+                if (wordOne != wordTwo) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
     return false;
@@ -755,4 +766,8 @@ bool SGBD::haveSymbol(const std::string& word, const char& character) {
 
 bool SGBD::isOnlySpaces(const std::string& word) {
     return std::all_of(word.begin(), word.end(), [](char c) { return std::isspace(c); });
+}
+
+void SGBD::trimRight(std::string& s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(), s.end());
 }

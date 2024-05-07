@@ -26,4 +26,5 @@ class SGBD {
     std::string getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol);
     bool haveSymbol(const std::string& word, const char& character);
     bool isOnlySpaces(const std::string& word);
+    void trimRight(std::string& str);
 };
