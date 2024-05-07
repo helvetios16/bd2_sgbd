@@ -13,7 +13,7 @@ int main(int argc, char const *argv[]) {
     // sgbd.addCsvToTable("Titanic.csv", "_tng");
     // sgbd.addRegister("prueba", "Juan, 20, 1.70");
     // sgbd.addCsvToTable("Titanic.csv", "prueba_titanic");
-    sgbd.see("prueba_titanic", "*", "Sex == male", "");
+    sgbd.see("prueba_titanic", "*", "Sex == male", "prueba_hombres");
     // Disk disk;
     // disk.getMemory();
     // disk.create();
