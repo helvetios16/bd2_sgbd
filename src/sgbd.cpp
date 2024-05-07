@@ -342,7 +342,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::cout << "Error en las condiciones" << std::endl;
             return;
         }
-        std::istringstream ssc(condition), sfs(searchLine);
+        std::istringstream ssc(condition), sfs(this->searchLine);
         std::string wordLine;
         std::getline(sfs, wordLine, '#');
         std::getline(ssc, stringConditions, ' ');
@@ -361,6 +361,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                     break;
                 }
             }
+            std::getline(sfs, wordLine, '#');
             std::getline(sfs, wordLine, '#');
         }
         if (searchWord && this->isString == false) {
