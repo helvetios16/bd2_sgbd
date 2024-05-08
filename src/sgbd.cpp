@@ -415,7 +415,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 return;
             }
             // recorre la column a traves de un getline y buscar que este en el esquema y guardar la siguetne palabra en un string
-            std::string oldString, newString, strangeString, stringOfArchive;
+            std::string oldString, newString, strangeString, stringOfArchive, stringNumber;
             std::istringstream newStream(columns), newStreamArchive;
             while (std::getline(newStream, newString, ',')) {
                 newStreamArchive.str(searchLine);
@@ -423,10 +423,12 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                 while (std::getline(newStreamArchive, oldString, '#')) {
                     if (oldString == newString) {
                         std::getline(newStreamArchive, strangeString, '#');
-                        stringOfArchive += "#" + oldString + "#" + strangeString;
+                        std::getline(newStreamArchive, stringNumber, '#');
+                        stringOfArchive += "#" + oldString + "#" + strangeString + "#" + stringNumber;
                         break;
                     }
                     std::getline(newStreamArchive, oldString, '#');
+                    std::getline(newStreamArchive, stringNumber, '#');
                 }
             }
             std::string partLine = toPass + stringOfArchive;
@@ -463,12 +465,12 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::cout << formString.str() << std::endl;
             std::cout << stripes << std::endl;
         }
+        // Cosas de condicionales
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable);
-            std::string momentWord, problemWord;
+            std::string momentWord, problemWord, stringFuture;
             std::stringstream formattedString;
             std::istringstream ssb(lineTable), svss(this->searchLine);
-            std::string stringFuture;
             std::string stringPower = lineTable;
             if (!searchWord) {
                 std::getline(svss, problemWord, '#');
@@ -598,7 +600,6 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::cout << "No ingresa columnas que no existen en la tabla" << std::endl;
             return;
         }
-        // hacer el resto primero sin where lurgo si luego para copiar a un archivo, falta copiar
         std::istringstream sws(columns);
         std::string wordColumn, lineNumber;
         std::stringstream formattedColumn;
@@ -614,93 +615,126 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         }
         while (std::getline(archiveTable, lineTable)) {
             std::istringstream ss(lineTable), ssn(lineNumber);
-            std::string wordData, number, stringFuture;
+            std::string wordData, number, stringFuture, problemWord;
             std::stringstream formattedData;
-            // no olvidar agregar busqued apara conficioens usar ss
+            std::string stringPower = lineTable;
             if (!searchWord) {
-                bool endOfLine = false;
+                std::getline(ss, problemWord, '#');
                 for (int i = 0; i < index; i++) {
-                    std::getline(ss, stringFuture, ',');
-                    if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
-                        size_t nextCommaPos = lineTable.find("\",", ss.tellg());
-                        if (nextCommaPos != std::string::npos) {
-                            stringFuture += "," + lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg() + 1);
-                            ss.seekg(nextCommaPos + 2);
-                        } else {
-                            stringFuture += "," + lineTable.substr(ss.tellg());
-                            endOfLine = true;
-                        }
-                    }
-                    if (endOfLine) break;
+                    for (int j = 0; j < 3; ++j) std::getline(ss, problemWord, '#');
+                    stringFuture = stringPower.substr(0, std::stoi(problemWord));
+                    stringPower = stringPower.substr(std::stoi(problemWord));
                 }
             }
-            int counterToComma = 0;
-            std::string lineToPass;
+            // vista y pasar a archivo
+            std::string lineToPass, momentWord;
             while (std::getline(ssn, number, ' ')) {
-                bool endOfLine = false;
+                std::istringstream sssv(this->searchLine);
+                std::getline(sssv, momentWord, '#');
+                std::string forFuture = lineTable;
+                std::string tempData;
                 if (searchWord) {
                     int indexNumber = std::stoi(number);
-                    std::istringstream sbs(lineTable);
                     for (int i = 0; i < indexNumber; i++) {
-                        std::getline(sbs, wordData, ',');
-                        if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
-                            size_t nextCommaPos = lineTable.find("\",", sbs.tellg());
-                            if (nextCommaPos != std::string::npos) {
-                                wordData += "," + lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg() + 1);
-                                sbs.seekg(nextCommaPos + 2);
-                            } else {
-                                wordData += "," + lineTable.substr(sbs.tellg());
-                                endOfLine = true;
-                            }
-                        }
+                        for (int j = 0; j < 3; ++j) std::getline(sssv, momentWord, '#');
+                        tempData = forFuture.substr(0, std::stoi(momentWord));
+                        forFuture = forFuture.substr(std::stoi(momentWord));
                     }
-                    if (pass) {
-                        counterToComma++;
-                        lineToPass += wordData;
-                        if (counterToComma != sizeString(columns, ',')) {
-                            lineToPass += ",";
-                        }
-                    } else {
-                        formattedData << std::setw(COLUMN_WIDTH) << std::left << wordData.substr(0, COLUMN_WIDTH - 2);
-                    }
-                    if (endOfLine) break;
-                } else {
-                    if (stringFuture == "") {
-                        break;
-                    } else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
-                        int indexNumber = std::stoi(number);
-                        std::istringstream sbs(lineTable);
-                        for (int i = 0; i < indexNumber; i++) {
-                            std::getline(sbs, wordData, ',');
-                            if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
-                                size_t nextCommaPos = lineTable.find("\",", sbs.tellg());
-                                if (nextCommaPos != std::string::npos) {
-                                    wordData += "," + lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg() + 1);
-                                    sbs.seekg(nextCommaPos + 2);
-                                } else {
-                                    wordData += "," + lineTable.substr(sbs.tellg());
-                                    endOfLine = true;
-                                }
-                            }
-                        }
-                        if (pass) {
-                            counterToComma++;
-                            lineToPass += wordData;
-                            if (counterToComma != sizeString(columns, ',')) {
-                                lineToPass += ",";
-                            }
-                        } else {
-                            formattedData << std::setw(COLUMN_WIDTH) << std::left << wordData.substr(0, COLUMN_WIDTH - 2);
-                        }
-                        if (endOfLine) break;
-                    }
+                    formattedData << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
                 }
             }
-            if (lineToPass != "") {
-                archiveToPass << lineToPass << std::endl;
-            } else if (formattedData.str() != "") {
+            if (formattedData.str() != "")
                 std::cout << formattedData.str() << std::endl;
-            }
+            // while (std::getline(archiveTable, lineTable)) {
+            //     std::istringstream ss(lineTable), ssn(lineNumber);
+            //     std::string wordData, number, stringFuture;
+            //     std::stringstream formattedData;
+            //     // no olvidar agregar busqued apara conficioens usar ss
+            //     if (!searchWord) {
+            //         bool endOfLine = false;
+            //         for (int i = 0; i < index; i++) {
+            //             std::getline(ss, stringFuture, ',');
+            //             if (stringFuture.size() >= 1 && stringFuture.front() == '"' && stringFuture.back() != '"') {
+            //                 size_t nextCommaPos = lineTable.find("\",", ss.tellg());
+            //                 if (nextCommaPos != std::string::npos) {
+            //                     stringFuture += "," + lineTable.substr(ss.tellg(), nextCommaPos - ss.tellg() + 1);
+            //                     ss.seekg(nextCommaPos + 2);
+            //                 } else {
+            //                     stringFuture += "," + lineTable.substr(ss.tellg());
+            //                     endOfLine = true;
+            //                 }
+            //             }
+            //             if (endOfLine) break;
+            //         }
+            //     }
+            //     int counterToComma = 0;
+            //     std::string lineToPass;
+            //     while (std::getline(ssn, number, ' ')) {
+            //         bool endOfLine = false;
+            //         if (searchWord) {
+            //             int indexNumber = std::stoi(number);
+            //             std::istringstream sbs(lineTable);
+            //             for (int i = 0; i < indexNumber; i++) {
+            //                 std::getline(sbs, wordData, ',');
+            //                 if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
+            //                     size_t nextCommaPos = lineTable.find("\",", sbs.tellg());
+            //                     if (nextCommaPos != std::string::npos) {
+            //                         wordData += "," + lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg() + 1);
+            //                         sbs.seekg(nextCommaPos + 2);
+            //                     } else {
+            //                         wordData += "," + lineTable.substr(sbs.tellg());
+            //                         endOfLine = true;
+            //                     }
+            //                 }
+            //             }
+            //             if (pass) {
+            //                 counterToComma++;
+            //                 lineToPass += wordData;
+            //                 if (counterToComma != sizeString(columns, ',')) {
+            //                     lineToPass += ",";
+            //                 }
+            //             } else {
+            //                 formattedData << std::setw(COLUMN_WIDTH) << std::left << wordData.substr(0, COLUMN_WIDTH - 2);
+            //             }
+            //             if (endOfLine) break;
+            //         } else {
+            //             if (stringFuture == "") {
+            //                 break;
+            //             } else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
+            //                 int indexNumber = std::stoi(number);
+            //                 std::istringstream sbs(lineTable);
+            //                 for (int i = 0; i < indexNumber; i++) {
+            //                     std::getline(sbs, wordData, ',');
+            //                     if (wordData.size() >= 1 && wordData.front() == '"' && wordData.back() != '"') {
+            //                         size_t nextCommaPos = lineTable.find("\",", sbs.tellg());
+            //                         if (nextCommaPos != std::string::npos) {
+            //                             wordData += "," + lineTable.substr(sbs.tellg(), nextCommaPos - sbs.tellg() + 1);
+            //                             sbs.seekg(nextCommaPos + 2);
+            //                         } else {
+            //                             wordData += "," + lineTable.substr(sbs.tellg());
+            //                             endOfLine = true;
+            //                         }
+            //                     }
+            //                 }
+            //                 if (pass) {
+            //                     counterToComma++;
+            //                     lineToPass += wordData;
+            //                     if (counterToComma != sizeString(columns, ',')) {
+            //                         lineToPass += ",";
+            //                     }
+            //                 } else {
+            //                     formattedData << std::setw(COLUMN_WIDTH) << std::left << wordData.substr(0, COLUMN_WIDTH - 2);
+            //                 }
+            //                 if (endOfLine) break;
+            //             }
+            //         }
+            //     }
+            //     if (lineToPass != "") {
+            //         archiveToPass << lineToPass << std::endl;
+            //     } else if (formattedData.str() != "") {
+            //         std::cout << formattedData.str() << std::endl;
+            //     }
+            // }
         }
         archiveToPass.close();
         return;
@@ -752,6 +786,7 @@ bool SGBD::haveTheWordsInScheme(const std::string& lineOne, const std::string& l
                 break;
             }
             std::getline(sst, wordTwo, '#');
+            std::getline(sst, wordTwo, '#');
         }
         if (!found) {
             return false;
@@ -770,6 +805,7 @@ std::string SGBD::getWordPositionOfLineScheme(const std::string& word, const std
         if (words == word) {
             break;
         }
+        std::getline(ssi, words, symbol);
         std::getline(ssi, words, symbol);
     }
     return std::to_string(index);
