@@ -470,7 +470,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::istringstream ss(lineTable);
             std::string momentWord, problemWord, stringFuture;
             std::stringstream formattedString;
-            std::istringstream ssb(lineTable), svss(this->searchLine);
+            std::istringstream svss(this->searchLine);
             std::string stringPower = lineTable;
             if (!searchWord) {
                 std::getline(svss, problemWord, '#');
@@ -614,7 +614,7 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
             std::cout << stripes << std::endl;
         }
         while (std::getline(archiveTable, lineTable)) {
-            std::istringstream ss(lineTable), ssn(lineNumber);
+            std::istringstream ss(this->searchLine), ssn(lineNumber);
             std::string wordData, number, stringFuture, problemWord;
             std::stringstream formattedData;
             std::string stringPower = lineTable;
@@ -640,10 +640,30 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                         tempData = forFuture.substr(0, std::stoi(momentWord));
                         forFuture = forFuture.substr(std::stoi(momentWord));
                     }
-                    formattedData << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                    if (pass)
+                        lineToPass += tempData;
+                    else
+                        formattedData << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                } else {  // si searchword es falso es que hay condiciones
+                    if (isOnlySpaces(stringFuture))
+                        break;
+                    else if (checkParementer(stringFuture, stringOperator, stringNumber)) {
+                        int indexNumber = std::stoi(number);
+                        for (int i = 0; i < indexNumber; i++) {
+                            for (int j = 0; j < 3; ++j) std::getline(sssv, momentWord, '#');
+                            tempData = forFuture.substr(0, std::stoi(momentWord));
+                            forFuture = forFuture.substr(std::stoi(momentWord));
+                        }
+                        if (pass)
+                            lineToPass += tempData;
+                        else
+                            formattedData << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                    }
                 }
             }
-            if (formattedData.str() != "")
+            if (lineToPass != "")
+                archiveToPass << lineToPass << std::endl;
+            else if (formattedData.str() != "")
                 std::cout << formattedData.str() << std::endl;
             // while (std::getline(archiveTable, lineTable)) {
             //     std::istringstream ss(lineTable), ssn(lineNumber);
