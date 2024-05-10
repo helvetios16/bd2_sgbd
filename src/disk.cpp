@@ -26,19 +26,19 @@ void Disk::create(int platter, int track, int sector, int blocks) {
     if (!std::filesystem::exists(path)) {
         if (std::filesystem::create_directory(path)) {
             for (int i = 0; i < sizePlatter; i++) {
-                std::string platter = path + "/" + platters + " " + std::to_string(i);
+                std::string platter = path + "/" + platters + " " + std::to_string(i + 1);
                 if (std::filesystem::create_directory(platter)) {
                     for (int j = 0; j < 2; j++) {  // 2 surfaces per platter
-                        std::string surface = platter + "/" + surfaces + " " + std::to_string(j);
+                        std::string surface = platter + "/" + surfaces + " " + std::to_string(j + 1);
                         if (std::filesystem::create_directory(surface)) {
                             for (int k = 0; k < sizeTrack; k++) {
-                                std::string track = surface + "/" + tracks + " " + std::to_string(k);
+                                std::string track = surface + "/" + tracks + " " + std::to_string(k + 1);
                                 if (std::filesystem::create_directory(track)) {
                                     for (int m = 0; m < sizeBlock; m++) {
-                                        std::string block = track + "/" + blcks + " " + std::to_string(m);
+                                        std::string block = track + "/" + blcks + " " + std::to_string(m + 1);
                                         if (std::filesystem::create_directory(block)) {
                                             for (int l = 0; l < sizeSector / sizeBlock; l++) {
-                                                std::string sector = block + "/" + sectors + " " + std::to_string(l);
+                                                std::string sector = block + "/" + sectors + " " + std::to_string(l + 1);
                                                 if (std::filesystem::create_directory(sector)) {
                                                     continue;
                                                 } else {
@@ -149,3 +149,7 @@ void Disk::byDefault() {
 }
 
 // luego guardar en la info en un txt para mantener la informacion si desea configurar el disco logicamente que este en otro lado del disco
+
+double Disk::getMemoryPerSector() { return this->memoryPerSector; }
+
+int Disk::getSectorPerBlock() { return this->sectorPerBlock; }

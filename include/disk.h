@@ -23,4 +23,6 @@ class Disk {
     void about();
     long long getMemory();
     void byDefault();
+    double getMemoryPerSector();
+    int getSectorPerBlock();
 };
