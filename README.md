@@ -101,3 +101,15 @@ select * from "table" where (column operator value) | "newtable"
 ```shell
 select (column(s),...) from "table" where (column operator value) | "newtable"
 ```
+
+### 5. Others commands
+
+```shell
+exit
+```
+
+#### or
+
+```shell
+clear
+```
