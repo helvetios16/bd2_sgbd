@@ -1,5 +1,5 @@
 main.exe: disk.o  memory.o sgbd.o shell.o main.o
-	g++ -g shell.o disk.o sgbd.o memory.o main.o -o main.exe
+	g++ shell.o disk.o sgbd.o memory.o main.o -o main.exe
 
 main.o: main.cpp include/sgbd.h
 	g++ -c main.cpp
