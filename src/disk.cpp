@@ -6,22 +6,23 @@
 #include <sstream>
 
 Disk::Disk() {
-    this->memory = 85899934592 / 2;       // 8gb
-    this->platters = 4;                   // 2gb per platter
-    this->surfaces = this->platters * 2;  // 1g per surface
-    this->tracks = 20;                    // 64kb per track
-    this->sectors = 4;                    // 640 bytes per sector
-    this->blocks = 5;                     // 1mb per block
+    this->memory = 85899934592 / 2;  // 8gb
+    this->platters = 2;              // 2gb per platter
+    this->surfaces = 2;              // 1g per surface
+    this->tracks = 5;                // 64kb per track
+    this->sectors = 8;               // 640 bytes per sector
+    this->blocks = 2;                // 1mb per block
     this->memoryPerBlock = 1024 * 1024;
     this->memoryPerSector = 640;
 }
 
-void Disk::create(int memory, int platter, int track, int sector) {
-    std::string path = "disk", platters = "platter", surfaces = "surface", tracks = "track", sectors = "sector";
-    int sizeMemory = memory == -1 ? this->memory : memory;
-    int sizePlatter = platter == -1 ? this->platters : platter;
-    int sizeTrack = track == -1 ? this->tracks : track;
-    int sizeSector = sector == -1 ? this->sectors : sector;
+void Disk::create(int memory, int platter, int track, int sector, int blocks) {
+    std::string path = "disk", platters = "platter", surfaces = "surface", tracks = "track", sectors = "sector", blcks = "block";
+    int sizeMemory = memory;
+    int sizePlatter = platter;
+    int sizeTrack = track;
+    int sizeSector = sector;
+    int sizeBlock = blocks;
     if (!std::filesystem::exists(path)) {
         if (std::filesystem::create_directory(path)) {
             for (int i = 0; i < sizePlatter; i++) {
@@ -33,12 +34,19 @@ void Disk::create(int memory, int platter, int track, int sector) {
                             for (int k = 0; k < sizeTrack; k++) {
                                 std::string track = surface + "/" + tracks + " " + std::to_string(k);
                                 if (std::filesystem::create_directory(track)) {
-                                    for (int l = 0; l < sizeSector; l++) {
-                                        std::string sector = track + "/" + sectors + " " + std::to_string(l);
-                                        if (std::filesystem::create_directory(sector)) {
-                                            continue;
+                                    for (int m = 0; m < sizeBlock; m++) {
+                                        std::string block = track + "/" + blcks + " " + std::to_string(m);
+                                        if (std::filesystem::create_directory(block)) {
+                                            for (int l = 0; l < sizeSector / sizeBlock; l++) {
+                                                std::string sector = block + "/" + sectors + " " + std::to_string(l);
+                                                if (std::filesystem::create_directory(sector)) {
+                                                    continue;
+                                                } else {
+                                                    std::cout << "Error creating " << sector << std::endl;
+                                                }
+                                            }
                                         } else {
-                                            std::cout << "Error creating " << sector << std::endl;
+                                            std::cout << "Error creating " << track << std::endl;
                                         }
                                     }
                                 } else {
@@ -58,6 +66,10 @@ void Disk::create(int memory, int platter, int track, int sector) {
             std::cout << "Error creating " << path << std::endl;
         }
     }
+}
+
+void Disk::createDefault() {
+    create(this->memory, this->platters, this->tracks, this->sectors, this->blocks);
 }
 
 void Disk::remove() {

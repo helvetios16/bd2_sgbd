@@ -14,7 +14,8 @@ class Disk {
 
    public:
     Disk();
-    void create(int memory, int platters, int tracks, int sectors);
+    void create(int memory, int platters, int tracks, int sectors, int blocks);
+    void createDefault();
     void remove();
     void about();
     void getMemory() {
