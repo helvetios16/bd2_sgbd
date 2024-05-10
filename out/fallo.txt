@@ -1,0 +1,2 @@
+proof#nombre#string#32
+ppt#PassengerId#int#8#Survived#int#8#Pclass#int#8#Name#string#64#Sex#string#12#Age#int#8#SibSp#int#8#Parch#int#8#Ticket#string#24#Fare#float#16#Cabin#string#16#Embarked#char#1
