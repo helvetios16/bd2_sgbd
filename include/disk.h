@@ -22,4 +22,5 @@ class Disk {
     void checkInformation();
     void about();
     long long getMemory();
+    void byDefault();
 };

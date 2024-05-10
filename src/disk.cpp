@@ -135,3 +135,17 @@ void Disk::checkInformation() {
 }
 
 long long Disk::getMemory() { return this->memory; }
+
+void Disk::byDefault() {
+    this->memory = 1073741824 / 2;  // 500mb;
+    this->platters = 4;
+    this->surfaces = 2;
+    this->tracks = 8;
+    this->blocks = 2;  // blocks per track
+    this->memoryPerBlock = 1048576 * 4;
+    this->sectors = 8;  // sectors per track
+    this->sectorPerBlock = 4;
+    this->memoryPerSector = 1048576;
+}
+
+// luego guardar en la info en un txt para mantener la informacion si desea configurar el disco logicamente que este en otro lado del disco
