@@ -1,5 +1,5 @@
-main.exe: disk.o sgbd.o shell.o main.o
-	g++ -g shell.o disk.o sgbd.o main.o -o main.exe
+main.exe: disk.o  memory.o sgbd.o shell.o main.o
+	g++ -g shell.o disk.o sgbd.o memory.o main.o -o main.exe
 
 main.o: main.cpp include/sgbd.h
 	g++ -c main.cpp
@@ -9,6 +9,9 @@ sgbd.o: src/sgbd.cpp include/sgbd.h
 
 disk.o: src/disk.cpp include/disk.h
 	g++ -c src/disk.cpp
+
+memory.o: src/memory.cpp include/memory.h
+	g++ -c src/memory.cpp
 
 shell.o: src/shell.cpp include/shell.h
 	g++ -c src/shell.cpp
@@ -22,3 +25,4 @@ clean:
 
 debug:
 	g++ -g src/sgbd.cpp src/disk.cpp src/shell.cpp main.cpp -o main.exe
+	gdb main.exe
