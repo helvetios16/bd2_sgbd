@@ -18,9 +18,6 @@ void Shell::shell() {
             std::cout << "Commands:" << std::endl;
             std::cout << "  clear - clear the screen" << std::endl;
             std::cout << "  exit - exit the shell" << std::endl;
-            std::cout << "  help - show this help" << std::endl;
-            std::cout << "  create - create a new database" << std::endl;
-            std::cout << "  use - use a database" << std::endl;
         } else if (command != "") {
             std::vector<std::string> tokens;
             std::string token, adder;
@@ -71,8 +68,22 @@ void Shell::sgbdControl(std::vector<std::string> tokens) {
             if (tokens[1].front() == '"' && tokens[1].back() == '"') tokens[1] = tokens[1].substr(1, tokens[1].size() - 2);
             sgbd.showtable(tokens[1]);
         }
+    } else if (tokens.size() == 6) {
+        if (tokens[0] == "load" && tokens[1] == "data" && tokens[3] == "into" && tokens[4] == "table") {
+            if (tokens[2].front() == '"' && tokens[2].back() == '"') tokens[2] = tokens[2].substr(1, tokens[2].size() - 2);
+            if (tokens[5].front() == '"' && tokens[5].back() == '"') tokens[5] = tokens[5].substr(1, tokens[5].size() - 2);
+            sgbd.addCsvToTable(tokens[2], tokens[5]);
+        }
     } else if (tokens.size() == 5) {
-        if (tokens[0] == "insert" && tokens[1] == "into" && tokens[3] == "values") {
+        if (tokens[0] == "alter" && tokens[1] == "table" && tokens[3] == "add") {
+            if (!haveSymbol(tokens[4], '#')) {
+                std::cout << "La tabla no puede tener el caracter #" << std::endl;
+                return;
+            }
+            if (tokens[2].front() == '"' && tokens[2].back() == '"') tokens[2] = tokens[2].substr(1, tokens[2].size() - 2);
+            if (tokens[4].front() == '(' && tokens[4].back() == ')') tokens[4] = tokens[4].substr(1, tokens[4].size() - 2);
+            sgbd.addColumn(tokens[4], tokens[2]);
+        } else if (tokens[0] == "insert" && tokens[1] == "into" && tokens[3] == "values") {
             if (tokens[2].front() == '"' && tokens[2].back() == '"') tokens[2] = tokens[2].substr(1, tokens[2].size() - 2);
             if (tokens[4].front() == '"' && tokens[4].back() == '"') tokens[4] = tokens[4].substr(1, tokens[4].size() - 2);
             sgbd.addRegister(tokens[2], tokens[4]);

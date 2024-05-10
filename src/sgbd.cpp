@@ -71,10 +71,7 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
         std::istringstream ssi(line);
         while (std::getline(ssi, word, ' ')) {
             std::getline(ssi, otherWord, ' ');
-            std::cout << word << std::endl;
-            std::cout << otherWord << std::endl;
             if (!validType(otherWord)) {
-                std::cout << otherWord << std::endl;
                 std::cout << "El tipo de dato no es valido" << std::endl;
                 return;
             }

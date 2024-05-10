@@ -15,11 +15,11 @@ int main(int argc, char const *argv[]) {
     // sgbd.addCsvToTable("Titanic.csv", "prueba_titanic");
     // sgbd.see("prueba_titanic", "PassengerId,Name,Age,Sex", "Age == 40", "persona_concretas");
 
-    Disk disk;
+    // Disk disk;
     // disk.getMemory();
-    disk.remove();
-    disk.createDefault();
-    // Shell shell;
-    // shell.shell();
+    // disk.remove();
+    // disk.createDefault();
+    Shell shell;
+    shell.shell();
     return 0;
 }
