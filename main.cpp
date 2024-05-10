@@ -7,9 +7,10 @@
 int main(int argc, char const *argv[]) {
     Disk disk;
     // disk.getMemory();
-    disk.remove();
-    disk.createDefault();
-    disk.checkInformation();
+    // disk.remove();
+    // disk.createDefault();
+    // disk.checkInformation();
+    // disk.about();
     // Shell shell;
     // shell.shell();
     return 0;

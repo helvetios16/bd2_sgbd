@@ -8,16 +8,18 @@ class Disk {
     int surfaces;
     int tracks;
     int blocks;
-    int memoryPerBlock;
+    double memoryPerBlock;
     int sectors;
     int sectorPerBlock;
-    int memoryPerSector;
+    double memoryPerSector;
 
    public:
     Disk();
-    void create(int memory, int platters, int tracks, int sectors, int blocks);
+    void create(int platters, int tracks, int sectors, int blocks);
+    void setDisk();
     void createDefault();
     void remove();
-    void about();
     void checkInformation();
+    void about();
+    long long getMemory();
 };

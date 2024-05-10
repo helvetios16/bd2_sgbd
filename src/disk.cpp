@@ -6,20 +6,19 @@
 #include <sstream>
 
 Disk::Disk() {
-    this->memory = 42949967296 / 8;  // 500mb;
+    this->memory = 1073741824 / 2;  // 500mb;
     this->platters = 4;
     this->surfaces = 2;
     this->tracks = 8;
     this->blocks = 2;  // blocks per track
-    this->memoryPerBlock = 2621457 * 4;
+    this->memoryPerBlock = 1048576 * 4;
     this->sectors = 8;  // sectors per track
     this->sectorPerBlock = 4;
-    this->memoryPerSector = 2621457;
+    this->memoryPerSector = 1048576;
 }
 
-void Disk::create(int memory, int platter, int track, int sector, int blocks) {
+void Disk::create(int platter, int track, int sector, int blocks) {
     std::string path = "disk", platters = "platter", surfaces = "surface", tracks = "track", sectors = "sector", blcks = "block";
-    long long sizeMemory = memory;
     int sizePlatter = platter;
     int sizeTrack = track;
     int sizeSector = sector;
@@ -70,7 +69,26 @@ void Disk::create(int memory, int platter, int track, int sector, int blocks) {
 }
 
 void Disk::createDefault() {
-    create(this->memory, this->platters, this->tracks, this->sectors, this->blocks);
+    create(this->platters, this->tracks, this->sectors, this->blocks);
+}
+
+void Disk::setDisk() {
+    std::cout << "Ingrese la cantidad de platos: ";
+    std::cin >> this->platters;
+    std::cout << "Ingrese la cantidad de superficies: ";
+    std::cin >> this->surfaces;
+    std::cout << "Ingrese la cantidad de pistas: ";
+    std::cin >> this->tracks;
+    std::cout << "Ingrese la cantidad de bloques por pista: ";
+    std::cin >> this->blocks;
+    std::cout << "Ingrese la cantidad de sectores por pista: ";
+    std::cin >> this->sectors;
+    std::cout << "Ingrese la cantidad de sectores por bloque: ";
+    std::cin >> this->sectorPerBlock;
+    std::cout << "Ingrese la cantidad de memoria por bloque: ";
+    std::cin >> this->memoryPerBlock;
+    std::cout << "Ingrese la cantidad de memoria por sector: ";
+    std::cin >> this->memoryPerSector;
 }
 
 void Disk::remove() {
@@ -87,9 +105,26 @@ void Disk::remove() {
     }
 }
 
+void Disk::about() {
+    std::cout << "Informacion del disco" << std::endl;
+    std::cout << "Memoria: " << this->memory << std::endl;
+    std::cout << "Platos: " << this->platters << std::endl;
+    std::cout << "Superficies: " << this->surfaces << std::endl;
+    std::cout << "Pistas: " << this->tracks << std::endl;
+    std::cout << "Bloques por pista: " << this->blocks << std::endl;
+    std::cout << "Memoria por bloque: " << this->memoryPerBlock << std::endl;
+    std::cout << "Sectores por pista: " << this->sectors << std::endl;
+    std::cout << "Sectores por bloque: " << this->sectorPerBlock << std::endl;
+    std::cout << "Memoria por sector: " << this->memoryPerSector << std::endl;
+}
+
 void Disk::checkInformation() {
     if (this->sectors % this->blocks != 0) {
         std::cout << "Los bloques tiene que ser multiplos de la cantidad de sectores por bloque" << std::endl;
+        return;
+    }
+    if ((this->memory) / (this->platters * this->surfaces * this->tracks * this->sectors) != (this->memoryPerSector)) {
+        std::cout << "La cantidad de memoria no coincide con la cantidad de memoria por el total de sectores" << std::endl;
         return;
     }
     if (this->memoryPerBlock != this->memoryPerSector * this->sectorPerBlock) {
@@ -98,3 +133,5 @@ void Disk::checkInformation() {
     }
     std::cout << "Todo correcto" << std::endl;
 }
+
+long long Disk::getMemory() { return this->memory; }
