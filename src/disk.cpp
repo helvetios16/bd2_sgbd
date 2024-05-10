@@ -6,19 +6,20 @@
 #include <sstream>
 
 Disk::Disk() {
-    this->memory = 85899934592 / 2;  // 8gb
-    this->platters = 2;              // 2gb per platter
-    this->surfaces = 2;              // 1g per surface
-    this->tracks = 5;                // 64kb per track
-    this->sectors = 8;               // 640 bytes per sector
-    this->blocks = 2;                // 1mb per block
-    this->memoryPerBlock = 1024 * 1024;
-    this->memoryPerSector = 640;
+    this->memory = 42949967296 / 8;  // 500mb;
+    this->platters = 4;
+    this->surfaces = 2;
+    this->tracks = 8;
+    this->blocks = 2;  // blocks per track
+    this->memoryPerBlock = 2621457 * 4;
+    this->sectors = 8;  // sectors per track
+    this->sectorPerBlock = 4;
+    this->memoryPerSector = 2621457;
 }
 
 void Disk::create(int memory, int platter, int track, int sector, int blocks) {
     std::string path = "disk", platters = "platter", surfaces = "surface", tracks = "track", sectors = "sector", blcks = "block";
-    int sizeMemory = memory;
+    long long sizeMemory = memory;
     int sizePlatter = platter;
     int sizeTrack = track;
     int sizeSector = sector;
@@ -84,4 +85,16 @@ void Disk::remove() {
     } else {
         std::cout << "Disk does not exist" << std::endl;
     }
+}
+
+void Disk::checkInformation() {
+    if (this->sectors % this->blocks != 0) {
+        std::cout << "Los bloques tiene que ser multiplos de la cantidad de sectores por bloque" << std::endl;
+        return;
+    }
+    if (this->memoryPerBlock != this->memoryPerSector * this->sectorPerBlock) {
+        std::cout << "La cantidad de memoria por bloque no coincide con la cantidad de memoria por sector" << std::endl;
+        return;
+    }
+    std::cout << "Todo correcto" << std::endl;
 }

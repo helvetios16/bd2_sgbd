@@ -8,8 +8,9 @@ class Disk {
     int surfaces;
     int tracks;
     int blocks;
-    int sectors;
     int memoryPerBlock;
+    int sectors;
+    int sectorPerBlock;
     int memoryPerSector;
 
    public:
@@ -18,7 +19,5 @@ class Disk {
     void createDefault();
     void remove();
     void about();
-    void getMemory() {
-        std::cout << this->memory << std::endl;
-    }
+    void checkInformation();
 };
