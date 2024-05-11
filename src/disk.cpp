@@ -1,6 +1,7 @@
 #include "../include/disk.h"
 
 #include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -34,23 +35,22 @@ void Disk::create(int platter, int track, int sector, int blocks) {
                             for (int k = 0; k < sizeTrack; k++) {
                                 std::string track = surface + "/" + tracks + " " + std::to_string(k + 1);
                                 if (std::filesystem::create_directory(track)) {
-                                    for (int m = 0; m < sizeBlock; m++) {
-                                        std::string block = track + "/" + blcks + " " + std::to_string(m + 1);
-                                        if (std::filesystem::create_directory(block)) {
-                                            for (int l = 0; l < sizeSector / sizeBlock; l++) {
-                                                std::string sector = block + "/" + sectors + " " + std::to_string(l + 1);
-                                                if (std::filesystem::create_directory(sector)) {
-                                                    continue;
-                                                } else {
-                                                    std::cout << "Error creating " << sector << std::endl;
-                                                }
-                                            }
-                                        } else {
-                                            std::cout << "Error creating " << track << std::endl;
-                                        }
+                                    for (int l = 0; l < sizeSector; l++) {
+                                        std::string sector = track + "/" + sectors + " " + std::to_string(l + 1) + ".txt";
+                                        std::fstream file(sector, std::ios::out);
+                                        file.close();
                                     }
-                                } else {
-                                    std::cout << "Error creating " << track << std::endl;
+                                    for (int m = 0; m < sizeBlock; m++) {
+                                        std::string block = track + "/" + blcks + " " + std::to_string(m + 1) + ".txt";
+                                        std::fstream file(block, std::ios::out);
+                                        for (int n = 0; n < this->sectorPerBlock; n++) {
+                                            file << track + "/" + sectors + " " + std::to_string((n + 1) * (m + 1)) << std::endl;
+                                            file << 0 << std::endl;
+                                            file << std::endl;
+                                            file << std::endl;
+                                        }
+                                        file.close();
+                                    }
                                 }
                             }
                         } else {
