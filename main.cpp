@@ -7,16 +7,17 @@
 
 int main(int argc, char const *argv[]) {
     Disk disk;
-    disk.remove();
-    disk.createDefault();
+    // disk.remove();
+    // disk.createDefault();
     // disk.getMemory();
     // disk.createDefault();
     // disk.checkInformation();
     // disk.about();
     // Shell shell;
     // shell.shell();
-    // Memory memo;
-    // memo.getBlocksToStack("disk");
+    Memory memo;
+    memo.getBlocksToStack("disk");
+    memo.printVectorInArchive();
     // memo.searchArchiveInBlocks("hola");
     return 0;
 }
