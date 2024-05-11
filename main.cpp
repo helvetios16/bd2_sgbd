@@ -6,15 +6,17 @@
 #include "include/shell.h"
 
 int main(int argc, char const *argv[]) {
-    // Disk disk;
+    Disk disk;
+    disk.remove();
+    disk.createDefault();
     // disk.getMemory();
-    // disk.remove();
     // disk.createDefault();
     // disk.checkInformation();
     // disk.about();
     // Shell shell;
     // shell.shell();
-    Memory memo;
-    memo.getBlocksToStack("disk");
+    // Memory memo;
+    // memo.getBlocksToStack("disk");
+    // memo.searchArchiveInBlocks("hola");
     return 0;
 }

@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "../include/memory.h"
+
 #define COLUMN_WIDTH 16
 
 SGBD::SGBD() {
