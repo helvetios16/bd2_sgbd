@@ -1,7 +1,7 @@
 main.exe: disk.o  memory.o sgbd.o shell.o main.o
 	g++ shell.o disk.o sgbd.o memory.o main.o -o main.exe
 
-main.o: main.cpp include/sgbd.h
+main.o: main.cpp
 	g++ -c main.cpp
 
 sgbd.o: src/sgbd.cpp include/sgbd.h
