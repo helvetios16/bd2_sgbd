@@ -27,4 +27,5 @@ class SGBD {
     bool haveSymbol(const std::string& word, const char& character);
     bool isOnlySpaces(const std::string& word);
     void trimRight(std::string& str);
+    void deleteRegister(const std::string& archive, const std::string& condition);
 };
