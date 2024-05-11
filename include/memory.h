@@ -19,13 +19,4 @@ class Memory {
    public:
     void getBlocksToStack(const std::filesystem::path& path);  // llamar solo una vez luego haver creado el disco
     void printVectorInArchive();                               // llamar solo una vez luego haver creado el disco
-    std::vector<std::string> getVectorBlocks();
-    void searchArchive(const std::string& archive);  // cambiar las funciones de busqueda de void  a string
-    void searchArchiveInBlocks(const std::string& archive);
-    std::string searchArchivePartial(const std::string& archive, const std::filesystem::path& path);
-    void searchArchiveGeneral(const std::string& archive);
-    void startArchive(const std::string& archive);
-    void createArchive(const std::string& archive);
-    void verifySizeArchive(const std::string& archive);
-    void moveArchive(const std::string& archive);
 };
