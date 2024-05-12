@@ -44,7 +44,7 @@ void Disk::create(int platter, int track, int sector, int blocks) {
                                         std::string block = track + "/" + blcks + " " + std::to_string(m + 1) + ".txt";
                                         std::fstream file(block, std::ios::out);
                                         for (int n = 0; n < this->sectorPerBlock; n++) {
-                                            file << track + "/" + sectors + " " + std::to_string((n + 1) * (m + 1)) << std::endl;
+                                            file << track + "/" + sectors + " " + std::to_string((n + 1) * (m + 1)) << ".txt" << std::endl;
                                             file << 0 << std::endl;
                                             file << std::endl;
                                             file << std::endl;

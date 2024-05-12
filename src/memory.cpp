@@ -30,26 +30,77 @@ void Memory::printVectorInArchive() {
     momentBlock.clear();
 }
 
-void Memory::addInBlockTable() {
+std::string Memory::getDatabaseOfBlock(const std::string& relations) {  // posiblemente cambiar esto
+    std::string archiveLine;
     std::fstream file("out/memory.txt", std::ios::in);
-    std::string line;
-    while (std::getline(file, line)) {
-        insideBlock(line);
-        break;
+    std::string lineBlock, lineSector, pathOfSector;
+    while (std::getline(file, lineBlock)) {
+        std::fstream fileSector(lineBlock, std::ios::in);
+        while (std::getline(fileSector, pathOfSector)) {
+            for (int i = 0; i < 3; i++) std::getline(fileSector, lineSector);
+            size_t found = lineSector.find(relations);
+            if (found != std::string::npos) {
+                archiveLine += pathOfSector + "\n";
+            }
+        }
     }
+    return archiveLine;
 }
 
-void Memory::insideBlock(const std::filesystem::path& path) {
-    std::fstream file(path, std::ios::in);
-    std::string paths, memory, relations, databases;
-    while (std::getline(file, paths)) {
-        std::getline(file, memory);
-        std::getline(file, relations);
-        std::getline(file, databases);
-        std::cout << paths << std::endl;
-        std::cout << memory << std::endl;
-        std::cout << relations << std::endl;
-        std::cout << databases << std::endl;
-        break;
+std::string Memory::getRelationOfBlock(const std::string& relations) {  // cambiar esto
+    std::string archiveLine;
+    std::fstream file("out/memory.txt", std::ios::in);
+    std::string lineBlock, lineSector, pathOfSector;
+    while (std::getline(file, lineBlock)) {
+        std::fstream fileSector(lineBlock, std::ios::in);
+        while (std::getline(fileSector, pathOfSector)) {
+            for (int i = 0; i < 2; i++) std::getline(fileSector, lineSector);
+            size_t found = lineSector.find(relations);
+            if (found != std::string::npos) {
+                archiveLine += pathOfSector + "\n";
+            }
+            std::getline(fileSector, lineSector);
+        }
     }
+    return archiveLine;
+}
+
+void Memory::addInBlockRelation(const std::string& database, const std::string& relations) {
+    std::fstream file("out/memory.txt", std::ios::in);
+    std::fstream temp("out/temp.txt", std::ios::out);
+    std::string line, path, memory, relation, dataBase, truePath;
+    bool proof = false;
+    while (std::getline(file, line)) {
+        std::fstream fileBlock(line, std::ios::in);
+        while (std::getline(fileBlock, path)) {
+            std::getline(fileBlock, memory);
+            std::getline(fileBlock, relation);
+            std::getline(fileBlock, dataBase);
+            size_t found = relation.find(relations);
+            if (found != std::string::npos) {
+                std::cout << "Ya existe la relacion" << std::endl;
+                proof = true;
+                break;
+            }
+            if (!proof) {
+                if (disk.getMemoryPerSector() - std::stoi(memory) > 1000) {
+                    relation += database + "@" + relations + "|";
+                    truePath = path;
+                    proof = true;
+                }
+            }
+            temp << path + "\n" + memory + "\n" + relation + "\n" + database + "\n";
+        }
+        fileBlock.close();
+        if (proof) break;
+    }
+    file.close();
+    temp.close();
+    if (!proof) return;
+    std::remove(line.c_str());
+    std::rename("out/temp.txt", line.c_str());
+    std::fstream fileSector(truePath, std::ios::out | std::ios::app);
+    std::cout << truePath << std::endl;
+    fileSector << database + "Ø" + relations + "\n";
+    fileSector.close();
 }
