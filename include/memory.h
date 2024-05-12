@@ -17,10 +17,10 @@ class Memory {
    public:
     void getBlocksToStack(const std::filesystem::path& path);  // llamar solo una vez luego haver creado el disco
     void printVectorInArchive();                               // llamar solo una vez luego haver creado el disco
-    void insideBlock(const std::filesystem::path& path);
     std::string getDatabaseOfBlock(const std::string& database);
     std::string getRelationOfBlock(const std::string& relations);
     void addInBlockRelation(const std::string& database, const std::string& relations);
     bool searchWordInLine(const std::string& line, const std::string& word);
     void addInBlockDatabase(const std::string& database);
+    void addRegisterInSectors(const std::string& database, const std::string& relation, const std::string& archive);
 };

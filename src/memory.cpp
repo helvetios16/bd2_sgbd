@@ -194,3 +194,49 @@ void Memory::addInBlockDatabase(const std::string& database) {
         return;
     }
 }
+
+void Memory::addRegisterInSectors(const std::string& database, const std::string& relation, const std::string& archive) {
+    std::fstream file("out/memory.txt", std::ios::in);
+    std::fstream archiveFile(archive, std::ios::in);
+    std::string line, path, memory, relations, dataBase, truePath, linePath;
+    int index = 0;
+    // leer el archivo donde estan los bloques
+    while (std::getline(file, line)) {
+        std::fstream fileBlock(line, std::ios::in);
+        // entrar a cada bloque y leer el archivo
+        std::fstream filesSector("out/temp.txt", std::ios::out);
+        while (std::getline(fileBlock, path)) {
+            std::getline(fileBlock, memory);
+            std::getline(fileBlock, relations);
+            std::getline(fileBlock, dataBase);
+            // si la base de datos y la relacion coinciden con las que se pasan por parametro
+            // --------------- falta ---------------
+            // se procede a agregar el registro en el sector
+            int memorySpace = std::stoi(memory);
+            std::fstream fileSector(path, std::ios::out | std::ios::app);
+            for (int i = 0; i < index; i++) std::getline(archiveFile, linePath);
+            while (std::getline(archiveFile, linePath)) {
+                if ((memorySpace + linePath.size()) > disk.getMemoryPerSector()) {
+                    break;
+                }
+                memorySpace += linePath.size();
+                fileSector << linePath + "\n";
+                index++;
+            }
+            filesSector << path + "\n" + std::to_string(memorySpace) + "\n" + relations + "\n" + dataBase + "\n";
+        }
+        filesSector.close();
+        fileBlock.close();
+        if (std::remove(line.c_str()) != 0) {
+            std::cout << "Error al borrar el archivo" << std::endl;
+            return;
+        }
+        if (std::rename("out/temp.txt", line.c_str()) != 0) {
+            std::cout << "Error al renombrar el archivo" << std::endl;
+            return;
+        }
+    }
+    // si el archivo tiene la relacion agregar el registro en tal sector
+    // en caso de que el sector se encuentre lleno buscar el siguiente sector y agregar el registro
+    // si es necesario tiene que buscar un bloque para un sector
+}
