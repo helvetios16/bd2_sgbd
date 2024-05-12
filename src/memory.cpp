@@ -98,6 +98,7 @@ void Memory::addInBlockRelation(const std::string& database, const std::string& 
                     truePath = path;
                     proof = true;
                     yeah = false;
+                    memory = std::to_string(std::stoi(memory) + database.size() + relations.size() + 1);
                 }
             }
             temp << path + "\n" + memory + "\n" + relation + "\n" + database + "\n";
@@ -138,4 +139,58 @@ bool Memory::searchWordInLine(const std::string& line, const std::string& word) 
         }
     }
     return false;
+}
+
+void Memory::addInBlockDatabase(const std::string& database) {
+    std::fstream file("out/memory.txt", std::ios::in);
+    std::fstream temp("out/temp.txt", std::ios::out);
+    if (!file.is_open() || !temp.is_open()) {
+        std::cout << "Error al abrir el archivo" << std::endl;
+        return;
+    }
+    std::string line, path, memory, relation, dataBase, truePath;
+    bool proof = false;
+    bool yeah = true;
+    while (std::getline(file, line)) {
+        std::fstream fileBlock(line, std::ios::in);
+        if (!fileBlock.is_open()) {
+            std::cout << "Error al abrir el archivo" << std::endl;
+            return;
+        }
+        while (std::getline(fileBlock, path)) {
+            std::getline(fileBlock, memory);
+            std::getline(fileBlock, relation);
+            std::getline(fileBlock, dataBase);
+            if (searchWordInLine(dataBase, database)) {
+                std::cout << "Ya existe la base de datos" << std::endl;
+                proof = true;
+                break;
+            }
+            if (yeah) {
+                if (disk.getMemoryPerSector() - std::stoi(memory) > 1000) {
+                    dataBase += database + "|";
+                    truePath = path;
+                    proof = true;
+                    yeah = false;
+                }
+            }
+            temp << path + "\n" + memory + "\n" + relation + "\n" + dataBase + "\n";
+        }
+        fileBlock.close();
+        if (proof || !yeah) break;
+    }
+    file.close();
+    temp.close();
+    if (proof && yeah) {
+        std::cout << "No se ha agregado la base de datos" << std::endl;
+        return;
+    }
+    if (std::remove(line.c_str()) != 0) {
+        std::cout << "Error al borrar el archivo" << std::endl;
+        return;
+    }
+    if (std::rename("out/temp.txt", line.c_str()) != 0) {
+        std::cout << "Error al renombrar el archivo" << std::endl;
+        return;
+    }
 }
