@@ -15,9 +15,9 @@ int main(int argc, char const *argv[]) {
     // disk.about();
     // Shell shell;
     // shell.shell();
-    Memory memo;
-    memo.getBlocksToStack("disk");
-    memo.printVectorInArchive();
-    // memo.searchArchiveInBlocks("hola");
+    Memory mery;
+    mery.addInBlockTable();
+    // mery.getBlocksToStack("disk"); // llamar solo una vez luego haver creado el disco
+    // mery.printVectorInArchive(); // llamar solo una vez luego haver creado el disco
     return 0;
 }
