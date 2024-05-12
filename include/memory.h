@@ -21,4 +21,5 @@ class Memory {
     std::string getDatabaseOfBlock(const std::string& database);
     std::string getRelationOfBlock(const std::string& relations);
     void addInBlockRelation(const std::string& database, const std::string& relations);
+    bool searchWordInLine(const std::string& line, const std::string& word);
 };

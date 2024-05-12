@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
     // Shell shell;
     // shell.shell();
     Memory mery;
-    mery.addInBlockRelation("db-schema", "titanic_prueba");
+    mery.addInBlockRelation("db-schema", "titanic_prueba1");
     // mery.addInBlockTable();
     // mery.getBlocksToStack("disk"); // llamar solo una vez luego haver creado el disco
     // mery.printVectorInArchive(); // llamar solo una vez luego haver creado el disco

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <sstream>
 #include <stack>
 #include <string>
 
@@ -68,39 +69,73 @@ std::string Memory::getRelationOfBlock(const std::string& relations) {  // cambi
 void Memory::addInBlockRelation(const std::string& database, const std::string& relations) {
     std::fstream file("out/memory.txt", std::ios::in);
     std::fstream temp("out/temp.txt", std::ios::out);
+    if (!file.is_open() || !temp.is_open()) {
+        std::cout << "Error al abrir el archivo" << std::endl;
+        return;
+    }
     std::string line, path, memory, relation, dataBase, truePath;
     bool proof = false;
+    bool yeah = true;
     while (std::getline(file, line)) {
         std::fstream fileBlock(line, std::ios::in);
+        if (!fileBlock.is_open()) {
+            std::cout << "Error al abrir el archivo" << std::endl;
+            return;
+        }
         while (std::getline(fileBlock, path)) {
             std::getline(fileBlock, memory);
             std::getline(fileBlock, relation);
             std::getline(fileBlock, dataBase);
-            size_t found = relation.find(relations);
-            if (found != std::string::npos) {
+            if (searchWordInLine(relation, database + "@" + relations)) {
                 std::cout << "Ya existe la relacion" << std::endl;
                 proof = true;
                 break;
             }
-            if (!proof) {
+
+            if (yeah) {
                 if (disk.getMemoryPerSector() - std::stoi(memory) > 1000) {
                     relation += database + "@" + relations + "|";
                     truePath = path;
                     proof = true;
+                    yeah = false;
                 }
             }
             temp << path + "\n" + memory + "\n" + relation + "\n" + database + "\n";
         }
         fileBlock.close();
-        if (proof) break;
+        if (proof || !yeah) break;
     }
     file.close();
     temp.close();
-    if (!proof) return;
-    std::remove(line.c_str());
-    std::rename("out/temp.txt", line.c_str());
+    if (proof && yeah) {
+        std::cout << "No se ha agregado la relacion" << std::endl;
+        return;
+    }
+    if (std::remove(line.c_str()) != 0) {
+        std::cout << "Error al borrar el archivo" << std::endl;
+        return;
+    }
+    if (std::rename("out/temp.txt", line.c_str()) != 0) {
+        std::cout << "Error al renombrar el archivo" << std::endl;
+        return;
+    }
     std::fstream fileSector(truePath, std::ios::out | std::ios::app);
-    std::cout << truePath << std::endl;
+    if (!fileSector.is_open()) {
+        std::cout << "Error al abrir el archivo 1" << std::endl;
+        return;
+    }
     fileSector << database + "Ø" + relations + "\n";
     fileSector.close();
+    std::cout << "Se ha agregado la relacion" << std::endl;
+}
+
+bool Memory::searchWordInLine(const std::string& line, const std::string& word) {
+    std::istringstream iss(line);
+    std::string token;
+    while (std::getline(iss, token, '|')) {
+        if (token == word) {
+            return true;
+        }
+    }
+    return false;
 }
