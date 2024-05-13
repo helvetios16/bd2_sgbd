@@ -27,7 +27,8 @@ class SGBD {
 
     std::string searchSheme(const std::string& csv);  // borrar luego
 
-    void see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass);
+    void see(const std::string& archive, const std::string& columns, const std::string& condition, const std::string& toPass);  // comprobar en proceso
+
     bool checkParementer(const std::string& operatorSymbol, const std::string& number, const std::string& numberToCheck);
     bool haveTheWordsInScheme(const std::string& lineOne, const std::string& lineTwo);
     std::string getWordPositionOfLineScheme(const std::string& word, const std::string& line, const char& symbol);
