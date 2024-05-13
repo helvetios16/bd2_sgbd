@@ -23,4 +23,5 @@ class Memory {
     bool searchWordInLine(const std::string& line, const std::string& word);
     void addInBlockDatabase(const std::string& database);
     void addRegisterInSectors(const std::string& database, const std::string& relation, const std::string& archive, int size);
+    void addInBlockRelationColumns(const std::string& database, const std::string& relation, const std::string& columns);
 };

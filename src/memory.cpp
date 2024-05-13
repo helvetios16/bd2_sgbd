@@ -39,10 +39,7 @@ std::string Memory::getDatabaseOfBlock(const std::string& relations) {  // posib
         std::fstream fileSector(lineBlock, std::ios::in);
         while (std::getline(fileSector, pathOfSector)) {
             for (int i = 0; i < 3; i++) std::getline(fileSector, lineSector);
-            size_t found = lineSector.find(relations);
-            if (found != std::string::npos) {
-                archiveLine += pathOfSector + "\n";
-            }
+            if (searchWordInLine(lineSector, relations)) archiveLine += pathOfSector + "\n";
         }
     }
     return archiveLine;
@@ -56,10 +53,7 @@ std::string Memory::getRelationOfBlock(const std::string& relations) {  // cambi
         std::fstream fileSector(lineBlock, std::ios::in);
         while (std::getline(fileSector, pathOfSector)) {
             for (int i = 0; i < 2; i++) std::getline(fileSector, lineSector);
-            size_t found = lineSector.find(relations);
-            if (found != std::string::npos) {
-                archiveLine += pathOfSector + "\n";
-            }
+            if (searchWordInLine(lineSector, relations)) archiveLine += pathOfSector + "\n";
             std::getline(fileSector, lineSector);
         }
     }
@@ -68,8 +62,7 @@ std::string Memory::getRelationOfBlock(const std::string& relations) {  // cambi
 
 void Memory::addInBlockRelation(const std::string& database, const std::string& relations) {
     std::fstream file("out/memory.txt", std::ios::in);
-    std::fstream temp("out/temp.txt", std::ios::out);
-    if (!file.is_open() || !temp.is_open()) {
+    if (!file.is_open()) {
         std::cout << "Error al abrir el archivo" << std::endl;
         return;
     }
@@ -79,6 +72,11 @@ void Memory::addInBlockRelation(const std::string& database, const std::string& 
     while (std::getline(file, line)) {
         std::fstream fileBlock(line, std::ios::in);
         if (!fileBlock.is_open()) {
+            std::cout << "Error al abrir el archivo" << std::endl;
+            return;
+        }
+        std::fstream temp("out/temp.txt", std::ios::out);
+        if (!temp.is_open()) {
             std::cout << "Error al abrir el archivo" << std::endl;
             return;
         }
@@ -104,10 +102,10 @@ void Memory::addInBlockRelation(const std::string& database, const std::string& 
             temp << path + "\n" + memory + "\n" + relation + "\n" + database + "\n";
         }
         fileBlock.close();
+        temp.close();
         if (proof || !yeah) break;
     }
     file.close();
-    temp.close();
     if (proof && yeah) {
         std::cout << "No se ha agregado la relacion" << std::endl;
         return;
@@ -143,8 +141,7 @@ bool Memory::searchWordInLine(const std::string& line, const std::string& word) 
 
 void Memory::addInBlockDatabase(const std::string& database) {
     std::fstream file("out/memory.txt", std::ios::in);
-    std::fstream temp("out/temp.txt", std::ios::out);
-    if (!file.is_open() || !temp.is_open()) {
+    if (!file.is_open()) {
         std::cout << "Error al abrir el archivo" << std::endl;
         return;
     }
@@ -152,6 +149,11 @@ void Memory::addInBlockDatabase(const std::string& database) {
     bool proof = false;
     bool yeah = true;
     while (std::getline(file, line)) {
+        std::fstream temp("out/temp.txt", std::ios::out);
+        if (!temp.is_open()) {
+            std::cout << "Error al abrir el archivo" << std::endl;
+            return;
+        }
         std::fstream fileBlock(line, std::ios::in);
         if (!fileBlock.is_open()) {
             std::cout << "Error al abrir el archivo" << std::endl;
@@ -177,10 +179,10 @@ void Memory::addInBlockDatabase(const std::string& database) {
             temp << path + "\n" + memory + "\n" + relation + "\n" + dataBase + "\n";
         }
         fileBlock.close();
+        temp.close();
         if (proof || !yeah) break;
     }
     file.close();
-    temp.close();
     if (proof && yeah) {
         std::cout << "No se ha agregado la base de datos" << std::endl;
         return;
@@ -249,5 +251,76 @@ void Memory::addRegisterInSectors(const std::string& database, const std::string
     // si el archivo tiene la relacion agregar el registro en tal sector
     // en caso de que el sector se encuentre lleno buscar el siguiente sector y agregar el registro
     // si es necesario tiene que buscar un bloque para un sector
-    std::cout << index << std::endl;
+}
+
+void Memory::addInBlockRelationColumns(const std::string& database, const std::string& relation, const std::string& columns) {
+    std::fstream file("out/memory.txt", std::ios::in);
+    if (!file.is_open()) {
+        std::cout << "Error al abrir el archivo" << std::endl;
+        return;
+    }
+    std::string line, path, memory, relationColumns, dataBase, truePath, lineSector;
+    bool proof = false;
+    int counter = 0;
+    while (std::getline(file, line)) {
+        std::fstream fileBlock(line, std::ios::in);
+        if (!fileBlock.is_open()) {
+            std::cout << "Error al abrir el archivo" << std::endl;
+            return;
+        }
+        std::fstream temp("out/temp.txt", std::ios::out);
+        if (!temp.is_open()) {
+            std::cout << "Error al abrir el archivo" << std::endl;
+            return;
+        }
+        while (std::getline(fileBlock, path)) {
+            std::fstream otherTemp("out/otherTemp.txt", std::ios::out);
+            if (!otherTemp.is_open()) {
+                std::cout << "Error al abrir el archivo" << std::endl;
+                return;
+            }
+            std::getline(fileBlock, memory);
+            std::getline(fileBlock, relationColumns);
+            std::getline(fileBlock, dataBase);
+            if (searchWordInLine(relationColumns, database + "@" + relation)) {
+                std::fstream fileSector(path, std::ios::in);
+                while (std::getline(fileSector, lineSector)) {
+                    std::string temp = lineSector.substr(0, lineSector.find("Ø"));
+                    std::stringstream ss(lineSector);
+                    std::string temp2;
+                    std::getline(ss, temp2, '#');
+                    temp2 = temp2.substr(temp.size() + 2);
+                    if (temp == database && temp2 == relation) {
+                        lineSector += columns;
+                        memory = std::to_string(std::stoi(memory) + columns.size());
+                        proof = true;
+                    }
+                    otherTemp << lineSector + "\n";
+                }
+            }
+            otherTemp.close();
+            if (std::remove(path.c_str()) != 0) {
+                std::cout << "Error al borrar el archivo" << std::endl;
+                return;
+            }
+            if (std::rename("out/otherTemp.txt", path.c_str()) != 0) {
+                std::cout << "Error al renombrar el archivo" << std::endl;
+                return;
+            }
+            temp << path + "\n" + memory + "\n" + relationColumns + "\n" + dataBase + "\n";
+            counter++;
+            if (proof && counter == disk.getSectorPerBlock()) break;
+        }
+        temp.close();
+        fileBlock.close();
+        if (std::remove(line.c_str()) != 0) {
+            std::cout << "Error al borrar el archivo" << std::endl;
+            return;
+        }
+        if (std::rename("out/temp.txt", line.c_str()) != 0) {
+            std::cout << "Error al renombrar el archivo" << std::endl;
+            return;
+        }
+        if (proof) break;
+    }
 }
