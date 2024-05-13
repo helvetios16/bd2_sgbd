@@ -31,6 +31,7 @@ int main(int argc, char const *argv[]) {
     // sgbd.addColumn("PassangerId int 8,Suvived int 8,Pclass int 8,Name string 64,Sex string 12,Age int 8,Sibsp int 8,Parch int 8,Ticket string 24,Fare float 16,Cabin string 16,Embarked char 1", "prueba_titanic");
     // sgbd.showtable("prueba_titanic");
     // sgbd.addCsvToTable("titanic.csv", "prueba_titanic");
-    sgbd.addRegister("prueba_titanic", "51,0,3,Arnold,female,18,1,0,349237,17.8,,S");
+    // sgbd.addRegister("prueba_titanic", "51,0,3,Arnold,female,18,1,0,349237,17.8,,S");
+    sgbd.see("prueba_titanic", "Name,Age", "", "");
     return 0;
 }
