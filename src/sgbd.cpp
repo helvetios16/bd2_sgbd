@@ -14,55 +14,27 @@
 
 #define COLUMN_WIDTH 16
 
-SGBD::SGBD() {
-    std::fstream file("out/scheme.txt", std::ios::in);
-    if (!file) {
-        std::fstream scheme("out/scheme.txt", std::ios::out);
-        if (!scheme) {
-            std::cout << "Error al abrir el archivo de esquemas" << std::endl;
-        } else {
-            scheme.close();
-            return;
-        }
-    } else {
-        file.close();
-    }
-}
-
 void SGBD::createDatabase(const std::string& db) {
-    std::fstream file("out/" + db + ".txt", std::ios::in);
-    if (file) {
-        std::cout << "Esta base de datos ya ha sido creada" << std::endl;
-        file.close();
-        return;
-    } else {
-        std::fstream newDb("out/" + db + ".txt", std::ios::out);
-        newDb.close();
-    }
+    std::string database = memory.getDatabaseOfBlock("db-" + db);
+    if (database == "")
+        memory.addInBlockDatabase("db-" + db);
+    else
+        std::cout << "La base de datos ya ha sido registrada" << std::endl;
 }
 
 void SGBD::useDatabase(const std::string& db) {
-    std::fstream file("out/" + db + ".txt", std::ios::in);
-    if (file) {
-        this->database = "out/" + db + ".txt";
-    } else {
-        std::cout << "No existe esta base de datos" << std::endl;
+    if (memory.getDatabaseOfBlock("db-" + db) == "") {
+        std::cout << "La base de datos no ha sido registrada" << std::endl;
+        return;
     }
-    file.close();
+    this->database = "db-" + db;
 }
 
 void SGBD::createTable(const std::string& archive) {
-    std::string file = searchSheme(archive);
-    if (file == "") {
-        std::fstream scheme(this->database, std::ios::out | std::ios::app);
-        if (!scheme.is_open()) {
-            std::cout << "Error al abrir el archivo de esquemas" << std::endl;
-            return;
-        }
-        scheme << archive << std::endl;
-        scheme.close();
+    if (memory.getRelationOfBlock(archive) == "") {
+        memory.addInBlockRelation(this->database, archive);
     } else {
-        std::cout << "La tabla ya esta registrado" << std::endl;
+        std::cout << "La tabla o relacion ya ha sido registrada" << std::endl;
     }
 }
 

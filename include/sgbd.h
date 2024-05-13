@@ -1,16 +1,22 @@
 #pragma once
 #include <string>
+
+#include "../include/memory.h"
+
 class SGBD {
    private:
     std::string searchLine;
     std::string database;
     bool isString = false;
+    bool isDatabase = false;
+    bool isTable = false;
+    Memory memory;
 
    public:
-    SGBD();
     void createDatabase(const std::string& db);
     void useDatabase(const std::string& db);
     void createTable(const std::string& archive);
+
     void addColumn(const std::string& information, const std::string& archive);
     void showtable(const std::string& archive);
     void addCsvToTable(const std::string& csv, const std::string& archive);
