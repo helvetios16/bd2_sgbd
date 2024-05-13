@@ -227,13 +227,12 @@ void Memory::addRegisterInSectors(const std::string& database, const std::string
                     break;
                 }
             }
-            if (proof) {
-                if (relations == "") relations = database + "@" + relation + "|";
-                if (dataBase == "") dataBase = database + "|";
+            if (proof) {  // revisar otra vez esto en el futuro para resolver algo necesario para el proyecto en parte de los bloques
                 if (!searchWordInLine(relations, database + "@" + relation)) relations += database + "@" + relation + "|";
                 if (!searchWordInLine(dataBase, database)) dataBase += database + "|";
             }
             filesSector << path + "\n" + std::to_string(memorySpace) + "\n" + relations + "\n" + dataBase + "\n";
+            archiveFile.close();
         }
         filesSector.close();
         fileBlock.close();
