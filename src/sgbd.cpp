@@ -527,56 +527,6 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         }
         archiveTemp.close();
         memory.addRegisterInSectors(this->database, archive, "out/register.txt", counter);
-    } else {
-        if (sizeString(columns, ',') > sizeString(searchLine, '#')) {
-            std::cout << "La cantidad de columnas no coincide con la tabla" << std::endl;
-            return;
-        }
-        if (!haveTheWordsInScheme(columns, searchLine)) {
-            std::cout << "No ingresa columnas que no existen en la tabla" << std::endl;
-            return;
-        }
-        std::istringstream sws(columns);
-        std::string wordColumn, lineNumber;
-        std::stringstream formattedColumn;
-        while (std::getline(sws, wordColumn, ',')) {
-            formattedColumn << std::setw(COLUMN_WIDTH) << std::left << wordColumn.substr(0, COLUMN_WIDTH - 2);
-            lineNumber += getWordPositionOfLineScheme(wordColumn, searchLine.substr(this->database.size() + 2 + archive.size() + 2), '#') + " ";
-        }
-        if (!pass) {
-            std::string stripes(COLUMN_WIDTH * sizeString(columns, ','), '-');
-            std::cout << formattedColumn.str() << std::endl;
-            std::cout << stripes << std::endl;
-        }
-        std::string paths = memory.getRelationOfBlock(this->database + "@" + archive), path;
-        std::istringstream ssi(paths);
-        std::fstream archiveTemp("out/register.txt", std::ios::out);
-        if (!archiveTemp.is_open()) {
-            std::cout << "Error al abrir el archivo de la tabla" << std::endl;
-            return;
-        }
-        while (std::getline(ssi, path, '\n')) {
-            std::fstream fileSector(path, std::ios::in);
-            if (!fileSector.is_open()) {
-                std::cout << "Error al abrir el archivo de la tabla" << std::endl;
-                return;
-            }
-            std::string line;
-            while (std::getline(fileSector, line)) {
-                std::string total = line.substr(0, line.find("Ø"));
-                std::string general = this->database + "@" + archive;
-                if (total == general) {
-                    int sizeLine = total.size();
-                    std::string lineNew = line.substr(sizeLine + 2);
-                    std::istringstream ssn(lineNumber), sss(searchLine);
-                    std::string wordData, number, stringFuture, problemWord;
-                    std::stringstream formattedData;
-                    std::string stringPower = lineNew;
-                }
-                if (!searchWord) {
-                }
-            }
-        }
     }
 }
 
