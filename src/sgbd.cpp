@@ -31,7 +31,11 @@ void SGBD::useDatabase(const std::string& db) {
 }
 
 void SGBD::createTable(const std::string& archive) {
-    if (memory.getRelationOfBlock(archive) == "") {
+    if (this->database == "") {
+        std::cout << "No se ha seleccionado una base de datos" << std::endl;
+        return;
+    }
+    if (memory.getRelationOfBlock(this->database + "@" + archive) == "") {
         memory.addInBlockRelation(this->database, archive);
     } else {
         std::cout << "La tabla o relacion ya ha sido registrada" << std::endl;
@@ -39,6 +43,10 @@ void SGBD::createTable(const std::string& archive) {
 }
 
 void SGBD::addColumn(const std::string& information, const std::string& archive) {
+    if (this->database == "") {
+        std::cout << "No se ha seleccionado una base de datos" << std::endl;
+        return;
+    }
     std::istringstream ss(information);
     std::string line, word, otherWord, passLine;
     while (std::getline(ss, line, ',')) {
@@ -50,7 +58,14 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
                 return;
             }
             if (otherWord == "int" || otherWord == "float") {
-                passLine += "#" + word + "#" + otherWord + "#" + "8";
+                passLine += "#" + word + "#" + otherWord;
+                std::getline(ssi, otherWord, ' ');
+                if (!isdigit(otherWord[0])) {
+                    std::cout << "Se tiene que registrar un numero para los numeros" << std::endl;
+                    return;
+                } else {
+                    passLine += "#" + otherWord;
+                }
             } else if (otherWord == "string" || otherWord == "char") {
                 passLine += "#" + word + "#" + otherWord;
                 std::getline(ssi, otherWord, ' ');
@@ -65,49 +80,85 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
             }
         }
     }
-    std::fstream scheme(this->database, std::ios::in | std::ios::out);
-    std::fstream temp("out/temp.txt", std::ios::out);
-    if (!scheme.is_open() || !temp.is_open()) {
-        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+    if (memory.getRelationOfBlock(this->database + "@" + archive) == "") {
+        std::cout << "La tabla no se encuentra registrada" << std::endl;
         return;
-    }
-    while (std::getline(scheme, line)) {
-        std::istringstream ss(line);
-        if (std::getline(ss, word, '#')) {
-            if (word == archive) {
-                temp << line + passLine << std::endl;
-            } else {
-                temp << line << std::endl;
-            }
-        }
-    }
-    scheme.close();
-    temp.close();
-    std::remove(this->database.c_str());
-    std::rename("out/temp.txt", this->database.c_str());
+    } else
+        memory.addInBlockRelationColumns(this->database, archive, passLine);
 }
 
 void SGBD::showtable(const std::string& archive) {
-    std::string file = searchSheme(archive);
-    if (file == "") {
+    // std::string file = searchSheme(archive);
+    // if (file == "") {
+    //     std::cout << "La tabla no se encuentra registrada" << std::endl;
+    //     return;
+    // }
+    // std::string word;
+    // std::istringstream ss(file);
+    // std::stringstream formString;
+    // std::getline(ss, word, '#');
+    // std::cout << word << std::endl;
+    // std::string stripes(COLUMN_WIDTH * 3, '-');
+    // std::cout << stripes << std::endl;
+    // while (std::getline(ss, word, '#')) {
+    //     formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
+    //     std::getline(ss, word, '#');
+    //     formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
+    //     std::getline(ss, word, '#');
+    //     formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2) << std::endl;
+    // }
+    // std::cout << formString.str();
+    if (this->database == "") {
+        std::cout << "No se ha seleccionado una base de datos" << std::endl;
+        return;
+    }
+    std::string paths = memory.getRelationOfBlock(this->database + "@" + archive);
+    if (paths == "") {
         std::cout << "La tabla no se encuentra registrada" << std::endl;
         return;
     }
+    std::stringstream formStringData;
+    std::istringstream ss(paths);
+    std::string path, searchLine;
+    int sizeLost = 0;
+    bool process = false;
+    while (std::getline(ss, path, '\n')) {
+        std::fstream archiveRelation(path, std::ios::in);
+        if (!archiveRelation.is_open()) {
+            std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+            return;
+        }
+        std::string line;
+        while (std::getline(archiveRelation, line)) {
+            std::string temp = line.substr(0, line.find("Ø"));
+            std::istringstream sss(line);
+            std::string temp2;
+            std::getline(sss, temp2, '#');
+            temp2 = temp2.substr(temp.size() + 2);
+            if (temp == database && temp2 == archive) {
+                searchLine = line;
+                sizeLost = temp.size() + 2;
+                process = true;
+                break;
+            }
+        }
+        if (process) break;
+    }
+    searchLine = searchLine.substr(sizeLost);
+    std::istringstream sss(searchLine);
     std::string word;
-    std::istringstream ss(file);
-    std::stringstream formString;
-    std::getline(ss, word, '#');
+    std::getline(sss, word, '#');
     std::cout << word << std::endl;
     std::string stripes(COLUMN_WIDTH * 3, '-');
     std::cout << stripes << std::endl;
-    while (std::getline(ss, word, '#')) {
-        formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
-        std::getline(ss, word, '#');
-        formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
-        std::getline(ss, word, '#');
-        formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2) << std::endl;
+    while (std::getline(sss, word, '#')) {
+        formStringData << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
+        std::getline(sss, word, '#');
+        formStringData << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
+        std::getline(sss, word, '#');
+        formStringData << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2) << std::endl;
     }
-    std::cout << formString.str();
+    std::cout << formStringData.str();
 }
 
 void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {

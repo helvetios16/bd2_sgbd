@@ -16,8 +16,8 @@ class SGBD {
     void createDatabase(const std::string& db);
     void useDatabase(const std::string& db);
     void createTable(const std::string& archive);
-
     void addColumn(const std::string& information, const std::string& archive);
+
     void showtable(const std::string& archive);
     void addCsvToTable(const std::string& csv, const std::string& archive);
     void addRegister(const std::string& archive, const std::string& variable);

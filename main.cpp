@@ -15,8 +15,8 @@ int main(int argc, char const *argv[]) {
     // disk.about();
     // Shell shell;
     // shell.shell();
-    Memory mery;
-    mery.addInBlockRelationColumns("db-schema", "movie", "#edad#int#8");
+    // Memory mery;
+    // mery.addInBlockRelationColumns("db-schema", "movie", "#edad#int#8");
     // mery.addInBlockRelation("db-schema", "movie");
     // mery.addInBlockDatabase("db-hola");
     // mery.addRegisterInSectors("db-schema", "titanic", "out/register.txt", 50);
@@ -24,9 +24,11 @@ int main(int argc, char const *argv[]) {
     // std::cout << mery.getDatabaseOfBlock("db-schema") << std::endl;
     // mery.getBlocksToStack("disk");  // llamar solo una vez luego haver creado el disco
     // mery.printVectorInArchive();    // llamar solo una vez luego haver creado el disco
-    // SGBD sgbd;
+    SGBD sgbd;
     // sgbd.createDatabase("schema");
-    // sgbd.useDatabase("schema");
-    // sgbd.createTable("movie");
+    sgbd.useDatabase("schema");
+    // sgbd.createTable("titanic");
+    // sgbd.addColumn("name string 64", "titanic");
+    // sgbd.showtable("titanic");
     return 0;
 }
