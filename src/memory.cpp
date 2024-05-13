@@ -195,33 +195,43 @@ void Memory::addInBlockDatabase(const std::string& database) {
     }
 }
 
-void Memory::addRegisterInSectors(const std::string& database, const std::string& relation, const std::string& archive) {
+void Memory::addRegisterInSectors(const std::string& database, const std::string& relation, const std::string& archive, int size) {
     std::fstream file("out/memory.txt", std::ios::in);
-    std::fstream archiveFile(archive, std::ios::in);
     std::string line, path, memory, relations, dataBase, truePath, linePath;
     int index = 0;
+    bool agree = false;
     // leer el archivo donde estan los bloques
     while (std::getline(file, line)) {
         std::fstream fileBlock(line, std::ios::in);
         // entrar a cada bloque y leer el archivo
         std::fstream filesSector("out/temp.txt", std::ios::out);
         while (std::getline(fileBlock, path)) {
+            std::fstream archiveFile(archive, std::ios::in);
+            bool proof = false;
             std::getline(fileBlock, memory);
             std::getline(fileBlock, relations);
             std::getline(fileBlock, dataBase);
-            // si la base de datos y la relacion coinciden con las que se pasan por parametro
-            // --------------- falta ---------------
-            // se procede a agregar el registro en el sector
             int memorySpace = std::stoi(memory);
             std::fstream fileSector(path, std::ios::out | std::ios::app);
-            for (int i = 0; i < index; i++) std::getline(archiveFile, linePath);
+            for (int i = 0; i < index; ++i) std::getline(archiveFile, linePath);
             while (std::getline(archiveFile, linePath)) {
                 if ((memorySpace + linePath.size()) > disk.getMemoryPerSector()) {
                     break;
                 }
                 memorySpace += linePath.size();
                 fileSector << linePath + "\n";
+                proof = true;
                 index++;
+                if (index == size) {
+                    agree = true;
+                    break;
+                }
+            }
+            if (proof) {
+                if (relations == "") relations = database + "@" + relation + "|";
+                if (dataBase == "") dataBase = database + "|";
+                if (!searchWordInLine(relations, database + "@" + relation)) relations += database + "@" + relation + "|";
+                if (!searchWordInLine(dataBase, database)) dataBase += database + "|";
             }
             filesSector << path + "\n" + std::to_string(memorySpace) + "\n" + relations + "\n" + dataBase + "\n";
         }
@@ -235,8 +245,10 @@ void Memory::addRegisterInSectors(const std::string& database, const std::string
             std::cout << "Error al renombrar el archivo" << std::endl;
             return;
         }
+        if (agree) break;
     }
     // si el archivo tiene la relacion agregar el registro en tal sector
     // en caso de que el sector se encuentre lleno buscar el siguiente sector y agregar el registro
     // si es necesario tiene que buscar un bloque para un sector
+    std::cout << index << std::endl;
 }
