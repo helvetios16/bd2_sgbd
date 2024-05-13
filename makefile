@@ -1,5 +1,6 @@
 main.exe: disk.o  memory.o sgbd.o shell.o main.o
 	g++ shell.o disk.o sgbd.o memory.o main.o -o main.exe
+	clear
 
 main.o: main.cpp
 	g++ -c main.cpp
