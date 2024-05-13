@@ -88,63 +88,9 @@ void SGBD::addColumn(const std::string& information, const std::string& archive)
 }
 
 void SGBD::showtable(const std::string& archive) {
-    // std::string file = searchSheme(archive);
-    // if (file == "") {
-    //     std::cout << "La tabla no se encuentra registrada" << std::endl;
-    //     return;
-    // }
-    // std::string word;
-    // std::istringstream ss(file);
-    // std::stringstream formString;
-    // std::getline(ss, word, '#');
-    // std::cout << word << std::endl;
-    // std::string stripes(COLUMN_WIDTH * 3, '-');
-    // std::cout << stripes << std::endl;
-    // while (std::getline(ss, word, '#')) {
-    //     formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
-    //     std::getline(ss, word, '#');
-    //     formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2);
-    //     std::getline(ss, word, '#');
-    //     formString << std::setw(COLUMN_WIDTH) << std::left << word.substr(0, COLUMN_WIDTH - 2) << std::endl;
-    // }
-    // std::cout << formString.str();
-    if (this->database == "") {
-        std::cout << "No se ha seleccionado una base de datos" << std::endl;
-        return;
-    }
-    std::string paths = memory.getRelationOfBlock(this->database + "@" + archive);
-    if (paths == "") {
-        std::cout << "La tabla no se encuentra registrada" << std::endl;
-        return;
-    }
+    std::string searchLine = getLineToTable(archive);
+    if (searchLine == "") return;
     std::stringstream formStringData;
-    std::istringstream ss(paths);
-    std::string path, searchLine;
-    int sizeLost = 0;
-    bool process = false;
-    while (std::getline(ss, path, '\n')) {
-        std::fstream archiveRelation(path, std::ios::in);
-        if (!archiveRelation.is_open()) {
-            std::cout << "Error al abrir el archivo de la tabla" << std::endl;
-            return;
-        }
-        std::string line;
-        while (std::getline(archiveRelation, line)) {
-            std::string temp = line.substr(0, line.find("Ø"));
-            std::istringstream sss(line);
-            std::string temp2;
-            std::getline(sss, temp2, '#');
-            temp2 = temp2.substr(temp.size() + 2);
-            if (temp == database && temp2 == archive) {
-                searchLine = line;
-                sizeLost = temp.size() + 2;
-                process = true;
-                break;
-            }
-        }
-        if (process) break;
-    }
-    searchLine = searchLine.substr(sizeLost);
     std::istringstream sss(searchLine);
     std::string word;
     std::getline(sss, word, '#');
@@ -161,17 +107,9 @@ void SGBD::showtable(const std::string& archive) {
     std::cout << formStringData.str();
 }
 
-void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
-    std::string file = searchSheme(archive);
-    if (file == "") {
-        std::cout << "La tabla no se encuentra registrada" << std::endl;
-        return;
-    }
-    std::fstream archiveTable("out/" + archive + ".txt", std::ios::out | std::ios::app);
-    if (!archiveTable.is_open()) {
-        std::cout << "Error al abrir el archivo de la tabla" << std::endl;
-        return;
-    }
+void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {  // ajustar para que se puede agregar "n" registros
+    std::string searchLine = getLineToTable(archive);
+    if (searchLine == "") return;
     std::fstream archiveCsv("csv/" + csv, std::ios::in);
     if (!archiveCsv.is_open()) {
         std::cout << "Error al abrir el archivo csv" << std::endl;
@@ -179,21 +117,21 @@ void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
     }
     std::string line, otherWord, word;
     std::getline(archiveCsv, line);
-    int sizeFile = sizeString(file, '#');
+    int sizeFile = sizeString(searchLine, '#');
     if (sizeFile != sizeString(line, ',')) {
         std::cout << "La cantidad de columnas no coincide con la tabla" << std::endl;
         archiveCsv.close();
-        archiveTable.close();
         return;
     }
     std::stringstream formString;
+    int index = 0;
     while (std::getline(archiveCsv, line)) {
-        std::istringstream ss(file);
+        std::istringstream ss(searchLine);
         std::istringstream sss(line);
         std::getline(ss, otherWord, '#');
+        formString << this->database + "@" + archive + "Ø";
         while (std::getline(ss, otherWord, '#')) {
-            std::getline(ss, otherWord, '#');
-            std::getline(ss, otherWord, '#');
+            for (int i = 0; i < 2; ++i) std::getline(ss, otherWord, '#');
             std::getline(sss, word, ',');
             bool endOfLine = false;
             if (word.size() >= 1 && word.front() == '"' && word.back() != '"') {
@@ -210,80 +148,64 @@ void SGBD::addCsvToTable(const std::string& csv, const std::string& archive) {
             if (endOfLine) break;
         }
         formString << std::endl;
+        index++;
     }
-    archiveTable << formString.str();
-    archiveTable.close();
-    archiveCsv.close();
+    std::fstream archiveToPass("out/register.txt", std::ios::out);
+    if (!archiveToPass.is_open()) {
+        std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+        return;
+    }
+    archiveToPass << formString.str();
+    archiveToPass.close();
+    memory.addRegisterInSectors(this->database, archive, "out/register.txt", index);
 }
 
 void SGBD::addRegister(const std::string& archive, const std::string& variable) {
-    std::fstream scheme(this->database, std::ios::in);
-    if (!scheme.is_open()) {
-        std::cout << "Error al abrir el archivo de esquemas" << std::endl;
+    std::string searchLine = getLineToTable(archive);
+    int sizeVariable = sizeString(variable, ',');
+    int sizeRelation = sizeString(searchLine, '#');
+    if (sizeVariable != sizeRelation) {
+        std::cout << "La cantidad de columnas no coincide con la tabla" << std::endl;
         return;
     }
-    std::string lineScheme, lineArchive, lineOfArchive;
-    bool table = false;
-    while (std::getline(scheme, lineScheme)) {
-        std::istringstream ss(lineScheme);
-        std::string firstWord;
-        if (std::getline(ss, firstWord, '#') && firstWord == archive) {
-            // validar que se encuentre el nombre de la tabla
-            table = true;
-            lineOfArchive = lineScheme;
-            int sizeTable = sizeString(lineScheme, '#');
-            int sizeVariable = sizeString(variable, ',');
-            // comrpobar que la cantidad de datos a registrar coninciar en cierto punto la cantdidad de columnas de la tabla}
-            if (!(sizeVariable == sizeTable)) {
-                std::cout << "Ingrese una cantidad de registros acorde a la tabla" << std::endl;
-                scheme.close();
+    std::istringstream ssv(variable);
+    std::istringstream sss(searchLine);
+    std::string firstWord, secondWord, thirdWord, primaryWord, secondWordNext;
+    std::getline(sss, primaryWord, '#');
+    while (std::getline(sss, firstWord, '#')) {
+        std::getline(sss, secondWord, '#');
+        std::getline(sss, thirdWord, '#');
+        std::getline(ssv, secondWordNext, ',');
+        if (!checkType(secondWord, secondWordNext)) {
+            std::cout << "Ingrese el dato correcto al tipo de variable" << std::endl;
+            return;
+        }
+        if (secondWord == "string") {
+            int sizeWord = secondWordNext.size();
+            if (sizeWord > std::stoi(thirdWord)) {
+                std::cout << "El tamaño de la cadena es mayor al permitido" << std::endl;
                 return;
             }
-            std::string nextWord, secondaryWord;
-            std::istringstream ssv(variable);
-            while (std::getline(ss, nextWord, '#')) {
-                std::getline(ss, nextWord, '#');
-                std::getline(ssv, secondaryWord, ',');
-                // luego comprobar que si es un int o float o char o bool
-                if (!checkType(nextWord, secondaryWord)) {
-                    std::cout << "Ingrese el dato correcto al tipo de variable" << std::endl;
-                    scheme.close();
-                    return;
-                }
-                if (nextWord == "string") {
-                    int sizeWord = secondaryWord.size();
-                    std::getline(ss, nextWord, '#');
-                    if (sizeWord > std::stoi(nextWord)) {
-                        std::cout << "El tamaño de la cadena es mayor al permitido" << std::endl;
-                        scheme.close();
-                        return;
-                    }
-                    continue;
-                }
-                // la tercera palabras son numeros entonces lo pasamos
-                std::getline(ss, nextWord, '#');
-            }
+            continue;
         }
-        if (table) break;
     }
-    if (!table) {
-        std::cout << "No se encuentra la tabla en el esquema" << std::endl;
-        return;
-    }
-    scheme.close();
-    std::fstream archiveTable("out/" + archive + ".txt", std::ios::out | std::ios::app);
     std::string input, otherInput;
     std::stringstream formString;
-    std::istringstream ssv(lineOfArchive), svs(variable);
-    std::getline(ssv, input, '#');
-    while (std::getline(ssv, input, '#')) {
-        std::getline(ssv, input, '#');
-        std::getline(ssv, input, '#');
-        std::getline(svs, otherInput, ',');
+    std::istringstream vvv(variable), svv(searchLine);
+    std::getline(svv, input, '#');
+    while (std::getline(svv, input, '#')) {
+        for (int i = 0; i < 2; ++i) std::getline(svv, input, '#');
+        std::getline(vvv, otherInput, ',');
         formString << std::setw(std::stoi(input)) << std::left << otherInput;
     }
-    archiveTable << formString.str() << std::endl;
-    archiveTable.close();
+    std::fstream archiveRegister("out/register.txt", std::ios::out);
+    if (!archiveRegister.is_open()) {
+        std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+        return;
+    }
+    archiveRegister << this->database << "@" << archive << "Ø" << formString.str() << std::endl;
+    archiveRegister.close();
+    memory.addRegisterInSectors(this->database, archive, "out/register.txt", 1);
 }
 
 bool SGBD::validType(const std::string& type) {
@@ -700,4 +622,45 @@ bool SGBD::isOnlySpaces(const std::string& word) {
 
 void SGBD::trimRight(std::string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(), s.end());
+}
+
+std::string SGBD::getLineToTable(const std::string& archive) {
+    if (this->database == "") {
+        std::cout << "No se ha seleccionado una base de datos" << std::endl;
+        return "";
+    }
+    std::string paths = memory.getRelationOfBlock(this->database + "@" + archive);
+    if (paths == "") {
+        std::cout << "La tabla no se encuentra registrada" << std::endl;
+        return "";
+    }
+    std::stringstream formStringData;
+    std::istringstream ss(paths);
+    std::string path, searchLine;
+    int sizeLost = 0;
+    bool process = false;
+    while (std::getline(ss, path, '\n')) {
+        std::fstream archiveRelation(path, std::ios::in);
+        if (!archiveRelation.is_open()) {
+            std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+            return "";
+        }
+        std::string line;
+        while (std::getline(archiveRelation, line)) {
+            std::string temp = line.substr(0, line.find("Ø"));
+            std::istringstream sss(line);
+            std::string temp2;
+            std::getline(sss, temp2, '#');
+            temp2 = temp2.substr(temp.size() + 2);
+            if (temp == database && temp2 == archive) {
+                searchLine = line;
+                sizeLost = temp.size() + 2;
+                process = true;
+                break;
+            }
+        }
+        if (process) break;
+    }
+    searchLine = searchLine.substr(sizeLost);
+    return searchLine;
 }
