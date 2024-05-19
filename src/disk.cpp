@@ -18,7 +18,7 @@ Disk::Disk() {
     this->memoryPerSector = 1048576;
 }
 
-void Disk::create(int platter, int track, int sector, int blocks) {
+void Disk::create(int platter = 0, int track = 0, int sector = 0, int blocks = 0) {
     std::string path = "disk", platters = "platter", surfaces = "surface", tracks = "track", sectors = "sector", blcks = "block";
     int sizePlatter = platter;
     int sizeTrack = track;
@@ -89,6 +89,7 @@ void Disk::setDisk() {
     std::cin >> this->memoryPerBlock;
     std::cout << "Ingrese la cantidad de memoria por sector: ";
     std::cin >> this->memoryPerSector;
+    create(this->platters, this->tracks, this->sectors, this->blocks);
 }
 
 void Disk::remove() {
