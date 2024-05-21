@@ -9,8 +9,8 @@ class Disk {
     int surfaces;
     int tracks;
     int blocks;
-    double memoryPerBlock;
     int sectors;
+    double memoryPerBlock;
     int sectorPerBlock;
     double memoryPerSector;
 
@@ -18,6 +18,7 @@ class Disk {
     Disk();
     void create(int platters, int tracks, int sectors, int blocks);
     void setDisk();
+    void setNoDefault();
     void createDefault();
     void remove();
     void checkInformation();

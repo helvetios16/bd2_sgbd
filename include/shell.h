@@ -10,6 +10,7 @@ class Shell {
    private:
     SGBD sgbd;
     Disk disk;
+    Memory memo;
 
    public:
     void shell();

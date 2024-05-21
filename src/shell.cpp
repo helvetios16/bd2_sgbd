@@ -91,6 +91,7 @@ void Shell::sgbdControl(std::vector<std::string> tokens) {
     } else if (tokens.size() >= 4) {
         if (tokens[0] == "select" && tokens[2] == "from") {
             if (haveSymbol(tokens[3], '#')) {
+                if (tokens[1].front() == '(' && tokens[1].back() == ')') tokens[1] = tokens[1].substr(1, tokens[1].size() - 2);
                 if (tokens[3].front() == '"' && tokens[3].back() == '"') tokens[3] = tokens[3].substr(1, tokens[3].size() - 2);
                 if (tokens.size() == 4)
                     sgbd.see(tokens[3], tokens[1], "", "");

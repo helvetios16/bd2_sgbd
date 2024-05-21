@@ -7,6 +7,16 @@
 #include <sstream>
 
 Disk::Disk() {
+    std::fstream file("out/disk_set.txt", std::ios::in);
+    if (!file.is_open()) {
+        std::cout << "No se ha encontrado el archivo de configuracion del disco" << std::endl;
+        return;
+    }
+    std::string line;
+    std::getline(file, line);
+    if (line != "default") {
+        return;
+    }
     this->memory = 1073741824 / 2;  // 500mb;
     this->platters = 4;
     this->surfaces = 2;
@@ -14,8 +24,8 @@ Disk::Disk() {
     this->blocks = 2;  // blocks per track
     this->memoryPerBlock = 1048576 * 4;
     this->sectors = 8;  // sectors per track
-    this->sectorPerBlock = 4;
     this->memoryPerSector = 1048576;
+    this->sectorPerBlock = this->memoryPerBlock / this->memoryPerSector;
 }
 
 void Disk::create(int platter = 0, int track = 0, int sector = 0, int blocks = 0) {
@@ -68,10 +78,6 @@ void Disk::create(int platter = 0, int track = 0, int sector = 0, int blocks = 0
     }
 }
 
-void Disk::createDefault() {
-    create(this->platters, this->tracks, this->sectors, this->blocks);
-}
-
 void Disk::setDisk() {
     std::cout << "Ingrese la cantidad de platos: ";
     std::cin >> this->platters;
@@ -89,6 +95,34 @@ void Disk::setDisk() {
     std::cin >> this->memoryPerBlock;
     std::cout << "Ingrese la cantidad de memoria por sector: ";
     std::cin >> this->memoryPerSector;
+    create(this->platters, this->tracks, this->sectors, this->blocks);
+}
+
+void Disk::setNoDefault() {
+    std::fstream file("out/disk_set.txt", std::ios::in);
+    if (!file.is_open()) {
+        std::cout << "No se ha encontrado el archivo de configuracion del disco" << std::endl;
+        return;
+    }
+    std::string line;
+    std::getline(file, line);
+    std::getline(file, line);
+    this->platters = std::stoi(line);
+    std::getline(file, line);
+    this->surfaces = std::stoi(line);
+    std::getline(file, line);
+    this->tracks = std::stoi(line);
+    std::getline(file, line);
+    this->blocks = std::stoi(line);
+    std::getline(file, line);
+    this->memoryPerBlock = std::stod(line);
+    std::getline(file, line);
+    this->sectors = std::stoi(line);
+    std::getline(file, line);
+    this->memoryPerSector = std::stod(line);
+}
+
+void Disk::createDefault() {
     create(this->platters, this->tracks, this->sectors, this->blocks);
 }
 
