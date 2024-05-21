@@ -9,7 +9,6 @@
 
 class Memory {
    private:
-    // std::stack<std::string> memory;  // puedo usar stack o vector
     std::vector<std::string> momentBlock;
     int maxSizeOfVector = 8;  // convertir macro luego
     Disk disk;

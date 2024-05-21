@@ -154,3 +154,7 @@ void Disk::byDefault() {
 double Disk::getMemoryPerSector() { return this->memoryPerSector; }
 
 int Disk::getSectorPerBlock() { return this->sectorPerBlock; }
+
+int Disk::getSector() { return this->sectors; }
+
+int Disk::getBlock() { return this->blocks; }

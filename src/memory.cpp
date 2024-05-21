@@ -35,12 +35,23 @@ std::string Memory::getDatabaseOfBlock(const std::string& relations) {  // posib
     std::string archiveLine;
     std::fstream file("out/memory.txt", std::ios::in);
     std::string lineBlock, lineSector, pathOfSector;
+    bool proof = false;
+    if (disk.getBlock() % disk.getSector() == 0) proof = true;
+    int counterBlock = 0, counterSector = 0;
     while (std::getline(file, lineBlock)) {
+        counterBlock++;
         std::fstream fileSector(lineBlock, std::ios::in);
         while (std::getline(fileSector, pathOfSector)) {
+            counterSector++;
             for (int i = 0; i < 3; i++) std::getline(fileSector, lineSector);
             if (searchWordInLine(lineSector, relations)) archiveLine += pathOfSector + "\n";
+            if (!proof) {
+                if (counterBlock == disk.getBlock() && counterSector == disk.getSector() - 1) break;
+            }
         }
+        fileSector.close();
+        counterSector = 0;
+        if (counterBlock == disk.getBlock()) counterBlock = 0;
     }
     return archiveLine;
 }
@@ -49,13 +60,24 @@ std::string Memory::getRelationOfBlock(const std::string& relations) {  // cambi
     std::string archiveLine;
     std::fstream file("out/memory.txt", std::ios::in);
     std::string lineBlock, lineSector, pathOfSector;
+    bool proof = false;
+    if (disk.getBlock() % disk.getSector() == 0) proof = true;
+    int counterBlock = 0, counterSector = 0;
     while (std::getline(file, lineBlock)) {
+        counterBlock++;
         std::fstream fileSector(lineBlock, std::ios::in);
         while (std::getline(fileSector, pathOfSector)) {
+            counterSector++;
             for (int i = 0; i < 2; i++) std::getline(fileSector, lineSector);
             if (searchWordInLine(lineSector, relations)) archiveLine += pathOfSector + "\n";
             std::getline(fileSector, lineSector);
+            if (!proof) {
+                if (counterBlock == disk.getBlock() && counterSector == disk.getSector() - 1) break;
+            }
         }
+        fileSector.close();
+        counterSector = 0;
+        if (counterBlock == disk.getBlock()) counterBlock = 0;
     }
     return archiveLine;
 }
@@ -99,7 +121,7 @@ void Memory::addInBlockRelation(const std::string& database, const std::string& 
                     memory = std::to_string(std::stoi(memory) + database.size() + relations.size() + 1);
                 }
             }
-            temp << path + "\n" + memory + "\n" + relation + "\n" + database + "\n";
+            temp << path + "\n" + memory + "\n" + relation + "\n" + dataBase + "\n";
         }
         fileBlock.close();
         temp.close();

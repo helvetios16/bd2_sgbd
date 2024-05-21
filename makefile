@@ -18,7 +18,6 @@ shell.o: src/shell.cpp include/shell.h
 
 run: main.exe
 	./main.exe
-	rm *.o
 
 clean:
 	rm *.o
