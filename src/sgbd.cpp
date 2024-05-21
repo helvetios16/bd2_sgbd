@@ -422,8 +422,8 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
                                 forFuture = forFuture.substr(std::stoi(momentWord));
                             }
                         } else {  // si searchWord es falso, hay condicional
-                            if (isOnlySpaces(stringNumber)) break;
-                            if (checkParementer(stringOperator, stringNumber, forFuture.substr(0, std::stoi(momentWord)))) {
+                            if (isOnlySpaces(stringFuture)) break;
+                            if (checkParementer(stringFuture, stringOperator, stringNumber)) {
                                 if (pass) {
                                     lineToPass += this->database + "@" + toPass + "Ø" + forFuture;
                                     break;
@@ -527,6 +527,99 @@ void SGBD::see(const std::string& archive, const std::string& columns, const std
         }
         archiveTemp.close();
         memory.addRegisterInSectors(this->database, archive, "out/register.txt", counter);
+    } else {
+        if (sizeString(columns, ',') > sizeString(searchLine, '#')) {
+            std::cout << "Los paremetros de colummas sobrepasan a los de la tabla" << std::endl;
+            return;
+        }
+        if (!haveTheWordsInScheme(columns, searchLine)) {
+            std::cout << "No ingresa columnas que no existen en la tabla" << std::endl;
+            return;
+        }
+        std::istringstream sws(columns);
+        std::string wordColumn, lineNumber;
+        std::stringstream formattedColumn;
+        while (std::getline(sws, wordColumn, ',')) {
+            formattedColumn << std::setw(COLUMN_WIDTH) << std::left << wordColumn.substr(0, COLUMN_WIDTH - 2);
+            lineNumber += getWordPositionOfLineScheme(wordColumn, searchLine, '#') + " ";
+        }
+        if (!pass) {
+            std::string stripes(COLUMN_WIDTH * sizeString(columns, ','), '-');
+            std::cout << formattedColumn.str() << std::endl;
+            std::cout << stripes << std::endl;
+        }
+        std::string paths = memory.getRelationOfBlock(this->database + "@" + archive), path;
+        std::istringstream ssi(paths);
+        std::fstream archiveTable("out/register.txt", std::ios::out);
+        if (!archiveTable.is_open()) {
+            std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+            return;
+        }
+        while (std::getline(ssi, path, '\n')) {
+            std::fstream fileSector(path, std::ios::in);
+            if (!fileSector.is_open()) {
+                std::cout << "Error al abrir el archivo de la tabla" << std::endl;
+                return;
+            }
+            std::string line;
+            while (std::getline(fileSector, line)) {
+                std::string total = line.substr(0, line.find("Ø"));
+                std::string general = this->database + "@" + archive;
+                if (total == general) {
+                    int sizeLine = total.size();
+                    std::string lineNew = line.substr(sizeLine + 2);
+                    std::string wordData, number, stringFuture, problemWord;
+                    std::stringstream formattedData;
+                    std::string stringPower = lineNew;
+                    std::istringstream ssvss(searchLine), ssn(lineNumber);
+                    if (!searchWord) {
+                        std::getline(ssvss, problemWord, '#');
+                        for (int i = 0; i < index; i++) {
+                            for (int j = 0; j < 3; ++j) std::getline(ssvss, problemWord, '#');
+                            stringFuture = stringPower.substr(0, std::stoi(problemWord));
+                            stringPower = stringPower.substr(std::stoi(problemWord));
+                        }
+                    }
+                    std::string lineToPass, momentWord;
+                    while (std::getline(ssn, number, ' ')) {
+                        std::istringstream sssv(searchLine);
+                        std::getline(sssv, momentWord, '#');
+                        std::string forFuture = lineNew;
+                        std::string tempData;
+                        if (searchWord) {
+                            int indexNumber = std::stoi(number);
+                            for (int i = 0; i < indexNumber; i++) {
+                                for (int j = 0; j < 3; ++j) std::getline(sssv, momentWord, '#');
+                                tempData = forFuture.substr(0, std::stoi(momentWord));
+                                forFuture = forFuture.substr(std::stoi(momentWord));
+                            }
+                            if (pass)
+                                lineToPass += tempData;  // buscar luego la manera de resolver esto, creo tuve la ide de que se agregre normal y luego al final cuando se vaya a pasar le agrego al inicio los de la base de datos y la tabla
+                            else
+                                formattedData << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                        } else {  // si searchword es falso es que hay condiciones
+                            if (isOnlySpaces(stringFuture)) break;
+                            if (checkParementer(stringFuture, stringOperator, stringNumber)) {
+                                int indexNumber = std::stoi(number);
+                                for (int i = 0; i < indexNumber; i++) {
+                                    for (int j = 0; j < 3; ++j) std::getline(sssv, momentWord, '#');
+                                    tempData = forFuture.substr(0, std::stoi(momentWord));
+                                    forFuture = forFuture.substr(std::stoi(momentWord));
+                                }
+                                if (pass)
+                                    lineToPass += tempData;
+                                else
+                                    formattedData << std::setw(COLUMN_WIDTH) << std::left << tempData.substr(0, COLUMN_WIDTH - 2);
+                            }
+                        }
+                    }
+                    if (lineToPass != "")
+                        archiveTable << this->database << "@" << toPass << "Ø" << lineToPass << std::endl;
+                    else if (formattedData.str() != "")
+                        std::cout << formattedData.str() << std::endl;
+                }
+            }
+        }
     }
 }
 
