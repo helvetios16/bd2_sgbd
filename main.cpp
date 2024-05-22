@@ -6,20 +6,20 @@
 #include "include/shell.h"
 
 int main(int argc, char const *argv[]) {
-    // Disk disk;
-    // disk.remove();
-    // // disk.setDisk();
-    // disk.createDefault();
-    // Memory mery;
-    // mery.getBlocksToStack("disk");  // llamar solo una vez luego haver creado el disco
-    // mery.printVectorInArchive();    // llamar solo una vez luego haver creado el disco
+    Disk disk;
+    disk.remove();
+    disk.setDisk();
+    disk.createDefault();
+    Memory mery;
+    mery.getBlocksToStack("disk");  // llamar solo una vez luego haver creado el disco
+    mery.printVectorInArchive();    // llamar solo una vez luego haver creado el disco
 
     // disk.getMemory();
     // disk.createDefault();
     // disk.checkInformation();
-    // disk.about();
-    Shell shell;
-    shell.shell();
+    disk.about();
+    // Shell shell;
+    // shell.shell();
 
     // mery.addInBlockRelationColumns("db-schema", "movie", "#edad#int#8");
     // mery.addInBlockRelation("db-schema", "titanic");

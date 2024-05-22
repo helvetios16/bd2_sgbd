@@ -10,9 +10,10 @@ class Disk {
     int tracks;
     int blocks;
     int sectors;
-    double memoryPerBlock;
+    long long memoryPerBlock;
     int sectorPerBlock;
-    double memoryPerSector;
+    long memoryPerSector;
+    bool par = true;
 
    public:
     Disk();

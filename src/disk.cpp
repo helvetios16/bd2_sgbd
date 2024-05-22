@@ -15,8 +15,10 @@ Disk::Disk() {
     std::string line;
     std::getline(file, line);
     if (line != "default") {
+        setNoDefault();
         return;
     }
+    if (file.is_open()) file.close();
     this->memory = 1073741824 / 2;  // 500mb;
     this->platters = 4;
     this->surfaces = 2;
@@ -87,15 +89,29 @@ void Disk::setDisk() {
     std::cin >> this->tracks;
     std::cout << "Ingrese la cantidad de bloques por pista: ";
     std::cin >> this->blocks;
-    std::cout << "Ingrese la cantidad de sectores por pista: ";
-    std::cin >> this->sectors;
-    std::cout << "Ingrese la cantidad de sectores por bloque: ";
-    std::cin >> this->sectorPerBlock;
     std::cout << "Ingrese la cantidad de memoria por bloque: ";
     std::cin >> this->memoryPerBlock;
+    std::cout << "Ingrese la cantidad de sectores por pista: ";
+    std::cin >> this->sectors;
     std::cout << "Ingrese la cantidad de memoria por sector: ";
     std::cin >> this->memoryPerSector;
     create(this->platters, this->tracks, this->sectors, this->blocks);
+    std::fstream file("out/disk_set.txt", std::ios::out);
+    file << "no-default" << std::endl;
+    file << this->platters << std::endl;
+    file << this->surfaces << std::endl;
+    file << this->tracks << std::endl;
+    file << this->blocks << std::endl;
+    file << this->memoryPerBlock << std::endl;
+    file << this->sectors << std::endl;
+    file << this->memoryPerSector << std::endl;
+    file.close();
+    this->sectorPerBlock = this->memoryPerBlock / this->memoryPerSector;
+    if (this->memoryPerBlock % this->memoryPerSector != 0) {
+        this->sectorPerBlock += 1;
+        this->par = false;
+    }
+    this->memory = this->platters * this->surfaces * this->tracks * this->sectors * this->memoryPerSector;
 }
 
 void Disk::setNoDefault() {
@@ -115,11 +131,14 @@ void Disk::setNoDefault() {
     std::getline(file, line);
     this->blocks = std::stoi(line);
     std::getline(file, line);
-    this->memoryPerBlock = std::stod(line);
+    this->memoryPerBlock = std::stoll(line);
     std::getline(file, line);
     this->sectors = std::stoi(line);
     std::getline(file, line);
-    this->memoryPerSector = std::stod(line);
+    this->memoryPerSector = std::stoll(line);
+    file.close();
+    this->sectorPerBlock = this->memoryPerBlock / this->memoryPerSector;
+    this->memory = this->platters * this->surfaces * this->tracks * this->sectors * this->memoryPerSector;
 }
 
 void Disk::createDefault() {
@@ -172,6 +191,9 @@ void Disk::checkInformation() {
 long long Disk::getMemory() { return this->memory; }
 
 void Disk::byDefault() {
+    std::fstream file("out/disk_set.txt", std::ios::out);
+    file << "default" << std::endl;
+    file.close();
     this->memory = 1073741824 / 2;  // 500mb;
     this->platters = 4;
     this->surfaces = 2;
