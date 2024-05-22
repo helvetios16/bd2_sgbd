@@ -16,6 +16,7 @@ Disk::Disk() {
     std::getline(file, line);
     if (line != "default") {
         setNoDefault();
+        if (file.is_open()) file.close();
         return;
     }
     if (file.is_open()) file.close();
@@ -56,6 +57,10 @@ void Disk::create(int platter = 0, int track = 0, int sector = 0, int blocks = 0
                                         std::string block = track + "/" + blcks + " " + std::to_string(m + 1) + ".txt";
                                         std::fstream file(block, std::ios::out);
                                         for (int n = 0; n < this->sectorPerBlock; n++) {
+                                            if (n + 1 == this->sectorPerBlock) {
+                                                if (!par) break;
+                                            }
+                                            if (m * this->sectorPerBlock + n == sizeSector) break;
                                             file << track + "/" + sectors + " " + std::to_string(m * this->sectorPerBlock + n + 1) << ".txt" << std::endl;
                                             file << 0 << std::endl;
                                             file << std::endl;
@@ -95,7 +100,6 @@ void Disk::setDisk() {
     std::cin >> this->sectors;
     std::cout << "Ingrese la cantidad de memoria por sector: ";
     std::cin >> this->memoryPerSector;
-    create(this->platters, this->tracks, this->sectors, this->blocks);
     std::fstream file("out/disk_set.txt", std::ios::out);
     file << "no-default" << std::endl;
     file << this->platters << std::endl;
@@ -112,6 +116,7 @@ void Disk::setDisk() {
         this->par = false;
     }
     this->memory = this->platters * this->surfaces * this->tracks * this->sectors * this->memoryPerSector;
+    create(this->platters, this->tracks, this->sectors, this->blocks);
 }
 
 void Disk::setNoDefault() {
