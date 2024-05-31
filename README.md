@@ -11,7 +11,7 @@ In this guide, you learn how to use the DBMS.
 #### Create
 
 ```shell
-create "database"
+create database "database"
 ```
 
 #### Use
